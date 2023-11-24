@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Head */
+@font-face {
+  font-family: "Alegreya";
+  src: url('/fonts/Alegreya.TTF');
+}
+
+/* Body */
+@font-face {
+  font-family: "Assistant";
+  src: url('/fonts/Assistant.TTF');
+}
