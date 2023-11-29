@@ -21,12 +21,12 @@ export default function Homepage() {
               <span className="text-red-600">{' Java Programming '}</span>
               With Enjoy!
             </p>
-            <Link
+            {/* <Link
               href={route('exercise')}
               className="py-4 font-body font-semibold"
             >
               <ButtonPrimary>Open Exercise</ButtonPrimary>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

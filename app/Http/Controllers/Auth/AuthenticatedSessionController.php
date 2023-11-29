@@ -34,7 +34,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        if(Auth::user()->role_asa == '1'){
+            return redirect('admin/dashboard')->with('message', 'Selamat datang di Dashboard');
+        }
+        else{
+            return redirect('/dashboard')->with('status', 'Logged in Successfully');
+        }
+
+        // return redirect()->intended(RouteServiceProvider::HOME);
     }
 
     /**
