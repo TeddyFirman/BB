@@ -25,9 +25,9 @@ class MateriController extends Controller
             'subject' => 'required'
         ]);
 
-        $subject = new Subject();
-        $subject->subject = $request->input('subject');
-        $subject->save();
+        Subject::create([
+            'subject' => $request->subject
+        ]);
 
         return response()->json(['message' => 'Data berhasil disimpan'], 200);
     }

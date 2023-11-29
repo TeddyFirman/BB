@@ -2,42 +2,40 @@ import React, { useState } from 'react';
 import Layout from './Layout/Layout';
 
 export default function Admin(props) {
-  const [data, setData] = useState({
-    subject: '',
-    // slug: '',
-    // deskripsi: '',
-  });
+  //   const [data, setData] = useState({
+  //     subject: '',
+  //     // slug: '',
+  //     // deskripsi: '',
+  //   });
 
   const [errors, setErrors] = useState({});
+  const [subject, setSubject] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      // Mendapatkan nilai token CSRF dari meta tag
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
       const response = await fetch('/admin/simpanmateri', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrf-token, // Menambahkan token CSRF ke header request
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ subject }),
       });
 
-      if (response.ok) {
-        // Data berhasil disimpan, tambahkan logika atau tindakan setelah berhasil disimpan
-        console.log('Data berhasil disimpan');
-      } else {
-        // Tangani kesalahan jika request gagal
-        console.error('Gagal menyimpan data');
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Respons Error:', errorData); // Log respons error untuk pemecahan masalah
+        setErrors(errorData.errors || {});
+        return;
       }
+
+      setSubject('');
+      setErrors({});
     } catch (error) {
-      console.error('Terjadi kesalahan:', error.message);
+      console.error('Kesalahan Fetch:', error);
     }
   };
-
 
   return (
     <Layout>
@@ -72,7 +70,6 @@ export default function Admin(props) {
       </div>
       <br></br>
       <form onSubmit={handleSubmit}>
-      <input type="hidden" name="_token" value={document.querySelector('meta[name="csrf-token"]').content} />
         <div className="tab-content mt-2" id="myTabContent">
           <div
             className="tab-pane fade show active border p-3"
@@ -86,8 +83,8 @@ export default function Admin(props) {
               <input
                 type="text"
                 name="subject"
-                value={data.subject}
-                onChange={(e) => setData({ ...data, subject: e.target.value })}
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
                 className={`w-full rounded-md border border-gray-300 px-3 py-1 focus:outline-none ${
                   errors.subject ? 'border-red-500' : ''
                 }`}
@@ -96,7 +93,6 @@ export default function Admin(props) {
                 <small className="text-red-500">{errors.subject}</small>
               )}
             </div>
-            {/* ... (input fields for 'slug' and 'deskripsi') */}
           </div>
           <div className="flex justify-end py-2">
             <button
