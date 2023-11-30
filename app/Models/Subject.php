@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Bab;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Subject extends Model
 {
@@ -14,4 +15,9 @@ class Subject extends Model
     protected $fillable = [
         'subject'
     ];
+
+    public function babs()
+    {
+        return $this->hasMany(Bab::class, 'subject_id', 'id');
+    }
 }
