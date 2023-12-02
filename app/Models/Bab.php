@@ -15,11 +15,17 @@ class Bab extends Model
     protected $fillable = [
         'subject_id',
         'judul',
-        'pertanyaan'
+        'pertanyaan',
+        'form_id'
     ];
 
     public function subject()
     {
         return $this->belongsTo(Subject::class, 'subject_id', 'id');
+    }
+
+    public function getQna()
+    {
+        return $this->hasMany(QnABab::class, 'bab_id', 'id');
     }
 }

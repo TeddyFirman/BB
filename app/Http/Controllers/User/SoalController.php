@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Controllers\User;
+
+use App\Models\Subject;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Bab;
+use App\Models\QnABab;
+
+class SoalController extends Controller
+{
+    public function indexSubject()
+    {
+        $materis = Subject::all();
+
+        return response()->json(['data' => $materis]);
+    }
+
+    public function indexBabMateri($id)
+    {
+        $subject = Subject::with('babs')->findOrFail($id);
+
+        $babs = $subject->babs;
+
+        return response()->json(['babs' => $babs]);
+    }
+
+    public function indexForm($id)
+    {
+        $formQna = Bab::where('form_id', $id)->with('getQna')->get();
+
+        if (count($formQna) > 0) {
+            if (count($formQna[0]['getQna']) > 0) {
+                $qna = QnABab::where('bab_id', $formQna[0]['id'])->with('question')->get();
+
+                return response()->json(['success' => true, 'bab' => $formQna, 'qna' => $qna]);
+            } else {
+                return response()->json(['success' => false, 'message' => '404 Not Found QNA']);
+            }
+        } else {
+            return response()->json(['success' => false,'message' => '404 Not Found']);
+        }
+    }
+}

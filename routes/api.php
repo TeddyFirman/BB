@@ -1,8 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AddQNAController;
 use App\Http\Controllers\Admin\BabController;
 use App\Http\Controllers\Admin\MateriController;
 use App\Http\Controllers\Admin\QnAController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\User\JawabanController;
+use App\Http\Controllers\User\SoalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +24,11 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
+
+// Route::middleware(['auth', 'isAdmin'])->group(function () {
 
 // materi
 Route::get('admin/materi', [MateriController::class, 'indexx']);
@@ -39,3 +48,25 @@ Route::post('admin/qna', [QnAController::class, 'store']);
 Route::get('admin/qna-details/{id}', [QnAController::class, 'indexDetail']);
 Route::put('admin/qna/{id}', [QnAController::class, 'update']);
 Route::delete('admin/qna/{id}', [QnAController::class, 'destroy']);
+
+// "Quizs"
+Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']);
+Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']);
+Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexx']);
+Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']);
+
+// });
+
+
+// middleware student/user
+// Route::middleware(['auth'])->group(function () {
+
+// Soal
+Route::get('student/materi', [SoalController::class, 'indexSubject']);
+Route::get('student/bab-materi/{id}', [SoalController::class, 'indexBabMateri']);
+Route::get('student/form-soal/{id}', [SoalController::class, 'indexForm']);
+
+// Jawaban
+Route::post('student/bab-submit', [JawabanController::class, 'store']);
+
+// });

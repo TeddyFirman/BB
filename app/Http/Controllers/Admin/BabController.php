@@ -23,10 +23,14 @@ class BabController extends Controller
 
         $materi = Subject::findOrFail($validatedData['subject_id']);
 
+        $unique = uniqid('fid');
+        // var_dump($unique);
+
         $bab = $materi->babs()->create([
             'subject_id' => $validatedData['subject_id'],
             'judul' => $validatedData['judul'],
-            'pertanyaan' => $validatedData['pertanyaan']
+            'pertanyaan' => $validatedData['pertanyaan'],
+            'form_id' => $unique
         ]);
 
         return response()->json(['message' => 'Data berhasil ditambahkan'], 201);
