@@ -28,34 +28,35 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
-// Route::middleware(['auth', 'isAdmin'])->group(function () {
+//Route::middleware('admin')->group(function () {
+Route::group(['middleware' => ['admin']], function () {
+// Route::group(['middleware' => ['auth', 'isAdmin']], function () {
 
-// materi
-Route::get('admin/materi', [MateriController::class, 'indexx']);
-Route::post('admin/materi', [MateriController::class, 'store']);
-Route::put('admin/materi/{id}', [MateriController::class, 'update']);
-Route::delete('admin/materi/{id}', [MateriController::class, 'destroy']);
+    // materi
+    Route::get('admin/materi', [MateriController::class, 'indexx']);
+    Route::post('admin/materi', [MateriController::class, 'store']);
+    Route::put('admin/materi/{id}', [MateriController::class, 'update']);
+    Route::delete('admin/materi/{id}', [MateriController::class, 'destroy']);
 
-// bab
-Route::get('admin/bab', [BabController::class, 'index']);
-Route::post('admin/bab', [BabController::class, 'store']);
-Route::put('admin/bab/{id}', [BabController::class, 'update']);
-Route::delete('admin/bab/{id}', [BabController::class, 'destroy']);
+    // bab
+    Route::get('admin/bab', [BabController::class, 'index']);
+    Route::post('admin/bab', [BabController::class, 'store']);
+    Route::put('admin/bab/{id}', [BabController::class, 'update']);
+    Route::delete('admin/bab/{id}', [BabController::class, 'destroy']);
 
-// q&a
-Route::get('admin/qna', [QnAController::class, 'index']);
-Route::post('admin/qna', [QnAController::class, 'store']);
-Route::get('admin/qna-details/{id}', [QnAController::class, 'indexDetail']);
-Route::put('admin/qna/{id}', [QnAController::class, 'update']);
-Route::delete('admin/qna/{id}', [QnAController::class, 'destroy']);
+    // q&a
+    Route::get('admin/qna', [QnAController::class, 'index']);
+    Route::post('admin/qna', [QnAController::class, 'store']);
+    Route::get('admin/qna-details/{id}', [QnAController::class, 'indexDetail']);
+    Route::put('admin/qna/{id}', [QnAController::class, 'update']);
+    Route::delete('admin/qna/{id}', [QnAController::class, 'destroy']);
 
-// "Quizs"
-Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']);
-Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']);
-Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexx']);
-Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']);
-
-// });
+    // "Quizs"
+    Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']);
+    Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']);
+    Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexx']);
+    Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']);
+});
 
 
 // middleware student/user
