@@ -24,13 +24,9 @@ class AdminMiddleware
         // return $next($request);
 
         if (!auth()->check() || !auth()->user()->hasRole($role)) {
-            // Redirect or abort if user is not authenticated or doesn't have the role
-            abort(403, 'Unauthorized action.');
+            return response()->json(['message' => 'Unauthorized. Access denied.'], 403);
         }
 
         return $next($request);
-
-
-        return response()->json(['message' => 'Unauthorized. Access denied.'], 401);
     }
 }

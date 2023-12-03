@@ -30,7 +30,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Route::group(['middleware' => [\Spatie\Permission\Middleware\RoleMiddleware::using('admin')]], function () {
- Route::middleware('auth:sanctum', 'role:admin')->group(function () {
+ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 // Route::group(['middleware' => ['role:admin']],function () {
 
     // materi
