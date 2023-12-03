@@ -3,32 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Subject;
 use Illuminate\Http\Request;
+use App\Models\Subject;
 use Inertia\Inertia;
 
 class MateriController extends Controller
 {
     public function index()
     {
-        return Inertia::render('AdminMateri');
+        return Inertia::render('Admin/Materi/Materi');
     }
 
     public function create()
     {
-        return Inertia::render('AdminMateriCreate');
+        return Inertia::render('Admin/Materi/Create');
     }
 
     public function store(Request $request)
     {
         $request->validate([
-            'subject' => 'required'
+            'subject' => 'required|string'
         ]);
 
         Subject::create([
             'subject' => $request->subject
         ]);
 
-        return response()->json(['message' => 'Data berhasil disimpan'], 200);
+        sleep(2.75);
+
+        return to_route('materi');
     }
 }

@@ -45,13 +45,13 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
 
     Route::controller(MateriController::class)->group(function () {
-        Route::get('/materi', 'index');
+        Route::get('/materi', 'index')->name('materi');
         Route::get('/materi/create', 'create');
-        Route::post('/simpanmateri', 'store');
-        Route::get('/materi/{materi}/edit','edit');
+        Route::post('/simpan-materi', 'store')->name('simpan-materi');
+        Route::get('/materi/{materi}/edit', 'edit');
         Route::put('/materi/{materi}', 'update');
         Route::delete('/materi/{materi}', 'destroy');
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

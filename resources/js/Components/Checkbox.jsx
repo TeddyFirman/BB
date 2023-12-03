@@ -1,12 +1,12 @@
 export default function Checkbox({ className = '', ...props }) {
-    return (
-        <input
-            {...props}
-            type="checkbox"
-            className={
-                'rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800 ' +
-                className
-            }
-        />
-    );
+  return (
+    <input
+      {...props}
+      type="checkbox"
+      className={
+        'rounded border-gray-200  text-red-400 shadow-sm transition duration-300 focus:ring-red-400 ' +
+        className
+      }
+    />
+  );
 }

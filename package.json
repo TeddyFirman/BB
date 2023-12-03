@@ -24,6 +24,8 @@
     "dependencies": {
         "@headlessui/react": "^1.7.17",
         "@heroicons/react": "^2.0.18",
-        "preline": "^2.0.1"
+        "preline": "^2.0.1",
+        "sweetalert2": "^11.10.1",
+        "sweetalert2-react-content": "^5.0.7"
     }
 }
