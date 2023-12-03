@@ -19,7 +19,7 @@ class AuthController extends Controller
             'confirm_password' => 'required|same:password'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Ada kesalahan',
@@ -43,24 +43,43 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        // if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        //     $auth = Auth::user();
+        //     $success['token'] = $auth->createToken('auth_token')->plainTextToken;
+        //     $success['name'] = $auth->name;
+
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Login Berhasil',
+        //         'data' => $success
+        //     ]);
+        // } else {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Cek kembali email dan password anda',
+        //         'data' => null
+        //     ]);
+        // }
+
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
             $success['token'] = $auth->createToken('auth_token')->plainTextToken;
             $success['name'] = $auth->name;
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Login Berhasil',
-                'data' => $success
-            ]);
+            if ($auth->role_asa == '1') {
+                return response()->json(['success' => true, 'message' => 'Login Berhasil sebagai admin', 'data' => $success]);
+            } else {
+                return response()->json(['success' => true, 'message' => 'Login Berhasil sebagai pengguna biasa', 'data' => $success]);
+            }
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cek kembali email dan password anda',
-                'data' => null
-            ]);
+            return response()->json(['success' => false, 'message' => 'Cek kembali email dan password anda', 'data' => null]);
         }
     }
 
-    
+    public function logout(Request $request)
+    {
+        $request->user()->tokens()->delete();
+
+        return response()->json(['success' => true, 'message' => 'Logout berhasil']);
+    }
 }

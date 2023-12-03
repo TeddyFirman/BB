@@ -14,19 +14,19 @@ class AdminMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next,$role): Response
+    public function handle(Request $request, Closure $next): Response
     {
-        if(!Auth::user()->role_asa == '1'){
-            // return redirect('/dashboard')->with('status', 'Akses ditolak anda bukan Admin');
-            return response()->json(['success' => false, 'message' => 'role anda bukan admin']);
-        }
-
-        // if(!$request->user()->hasRole($role)){
-        //     return response()->json([
-        //         'Message' => 'Kamu Tidak memiliki akses di sini'
-        //     ], 400);
+        // if(!Auth::user()->role_asa == '1'){
+        //     // return redirect('/dashboard')->with('status', 'Akses ditolak anda bukan Admin');
+        //     return response()->json(['success' => false, 'message' => 'role anda bukan admin']);
         // }
 
-        return $next($request);
+        // return $next($request);
+
+        if ($request->user() && $request->user()->role_asa === '1') {
+            return $next($request);
+        }
+
+        return response()->json(['message' => 'Unauthorized. Access denied.'], 401);
     }
 }
