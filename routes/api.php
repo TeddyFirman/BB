@@ -30,8 +30,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Route::group(['middleware' => [\Spatie\Permission\Middleware\RoleMiddleware::using('admin')]], function () {
-Route::middleware('admin')->group(function () {
-// Route::group(['middleware' => ['role:admin']],function () {
+//Route::middleware('admin')->group(function () {
+ Route::group(['middleware' => ['role:admin']],function () {
 
     // materi
     Route::get('admin/materi', [MateriController::class, 'indexx']);
