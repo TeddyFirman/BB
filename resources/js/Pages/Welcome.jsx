@@ -5,7 +5,7 @@ export default function Welcome({ auth }) {
   return (
     <>
       <Head title="Welcome" />
-      <div className="bg-dots-darker bg-dots-lighter relative min-h-screen bg-gray-200 bg-center selection:bg-red-500 selection:text-white sm:flex sm:items-center sm:justify-center">
+      <div className="relative min-h-screen bg-gray-200 bg-center selection:bg-red-500 selection:text-white sm:flex sm:items-center sm:justify-center">
         <Navbar auth={auth} />
         <div className="relative mx-auto h-screen max-w-5xl">
           <div className="flex h-full flex-col items-center justify-center px-16 py-8 md:flex-row md:space-x-8">

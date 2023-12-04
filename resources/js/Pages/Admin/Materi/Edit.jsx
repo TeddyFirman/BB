@@ -6,21 +6,14 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import withReactContent from 'sweetalert2-react-content';
 
 export default function Admin(props) {
-  const { data, setData, post, errors, reset } = useForm({
-    subject: '',
+  const { data, setData, patch, errors, reset } = useForm({
+    subject: props.subject.subject,
   });
 
-  useEffect(() => {
-    return () => {
-      reset('subject');
-    };
-  }, []);
-
   const alertWithSwal = withReactContent(Swal);
-
   const submit = (e) => {
     e.preventDefault();
-    post(route('materi.add', data), {
+    patch(route('materi.update'), {
       onSuccess: alertWithSwal.fire({
         timer: 3000,
         timerProgressBar: true,
@@ -48,10 +41,10 @@ export default function Admin(props) {
 
   return (
     <Layout>
-      <Head title="Tambah Materi" />
+      <Head title="Ubah Materi" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
         <h3 className="font-head text-xl font-semibold text-gray-800">
-          Tambah Materi
+          Ubah Materi
         </h3>
         <Link
           href="/admin/materi"

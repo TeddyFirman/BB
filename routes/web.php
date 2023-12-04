@@ -42,14 +42,14 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index']);
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::controller(MateriController::class)->group(function () {
         Route::get('/materi', 'index')->name('materi');
         Route::get('/materi/create', 'create');
-        Route::post('/simpan-materi', 'store')->name('simpan-materi');
-        Route::get('/materi/{materi}/edit', 'edit');
-        Route::put('/materi/{materi}', 'update');
+        Route::post('/add-materi', 'store')->name('materi.add');
+        Route::get('/materi/{materi}/edit', 'edit')->name('materi.edit');
+        Route::patch('/update-materi', 'update')->name('materi.update');
         Route::delete('/materi/{materi}', 'destroy');
     });
 });

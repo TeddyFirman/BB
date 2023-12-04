@@ -5,15 +5,15 @@ export default function Sidebar() {
     <>
       <div className="flex w-64 flex-shrink-0 flex-col bg-gray-800 text-white">
         <Link href="/admin/dashboard" className="flex items-center text-white">
-          <span className="font-head mx-auto py-2.5 text-xl font-bold">
+          <span className="mx-auto py-2.5 font-head text-xl font-bold">
             Admin Panel
           </span>
         </Link>
         <hr className="mx-2.5 border-gray-600" />
-        <ul className="font-head mb-auto flex flex-col px-2.5">
+        <ul className="mb-auto flex flex-col px-2.5 font-head">
           <li className="py-2.5">
             <Link
-              href="dashboard"
+              href={route('dashboard')}
               className={`flex flex-row items-center  transition duration-300 ${
                 window.location.pathname === '/admin/dashboard'
                   ? 'font-bold text-red-400 hover:text-red-600'
@@ -40,7 +40,7 @@ export default function Sidebar() {
           </li>
           <li className="py-2.5">
             <Link
-              href="materi"
+              href={route('materi')}
               className={`flex flex-row items-center transition duration-300 ${
                 window.location.pathname === '/admin/materi'
                   ? 'font-bold text-red-400 hover:text-red-600'
