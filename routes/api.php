@@ -8,6 +8,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\User\JawabanController;
 use App\Http\Controllers\User\SoalController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,8 +31,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 
 // Route::group(['middleware' => [\Spatie\Permission\Middleware\RoleMiddleware::using('admin')]], function () {
- Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
-// Route::group(['middleware' => ['role:admin']],function () {
+Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+    // Route::group(['middleware' => ['role:admin']],function () {
 
     // materi
     Route::get('admin/materi', [MateriController::class, 'indexx']);
@@ -64,7 +65,8 @@ Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logo
 // Route::middleware(['auth'])->group(function () {
 // Route::middleware('auth:sanctum')->group(function (Request $request) {
 
-Route::middleware('student')->group(function () {
+// Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'role:user|admin'])->group(function () {
 
     // Soal
     Route::get('student/materi', [SoalController::class, 'indexSubject']);
