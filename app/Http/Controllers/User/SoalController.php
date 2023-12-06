@@ -5,7 +5,10 @@ namespace App\Http\Controllers\User;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\Bab;
+use App\Models\BabAnswer;
+use App\Models\BabAttempt;
 use App\Models\QnABab;
 
 class SoalController extends Controller
@@ -23,7 +26,45 @@ class SoalController extends Controller
 
         $babs = $subject->babs;
 
-        return response()->json(['babs' => $babs]);
+        $babIds = $babs->pluck('id')->toArray();
+
+        $babAttempts = BabAttempt::whereIn('bab_id', $babIds)->get();
+
+        $babData = [];
+
+        foreach ($babAttempts as $babAttempt) {
+            $attemptId = $babAttempt->id;
+            $babAnswers = BabAnswer::where('attempt_id', $attemptId)->get();
+
+            $processedBabAnswers = [];
+            $isCompleted = true;
+
+            foreach ($babAnswers as $babAnswer) {
+                $answer = Answer::where('question_id', $babAnswer->question_id)->first()->answer;
+
+                $babAnswer->update(['is_correct' => ($babAnswer->typed_answer === $answer)]);
+
+                $processedBabAnswers = [
+                    'attempt_id' => $babAnswer->attempt_id,
+                    'typed_answer' => $babAnswer->typed_answer,
+                    'is_correct' => $babAnswer->is_correct
+                ];
+
+                $isCompleted = $isCompleted && $babAnswer->typed_answer === $answer;
+
+                $processedBabAnswers[] = $processedBabAnswers;
+            }
+
+            $status = $isCompleted ? 'completed' : 'tried';
+
+            $babData[] = [
+                'attempt_id' => $attemptId,
+                'bab_answers' => $processedBabAnswers,
+                'status' => $status
+            ];
+        }
+
+        return response()->json(['babs' => $babs, 'Data Remark' => $babData]);
     }
 
     public function indexForm($id)
