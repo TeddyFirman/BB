@@ -14,7 +14,7 @@ class AdminMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         // if(!Auth::user()->role_asa == '1'){
         //     // return redirect('/dashboard')->with('status', 'Akses ditolak anda bukan Admin');
@@ -23,8 +23,12 @@ class AdminMiddleware
 
         // return $next($request);
 
-        if (!auth()->check() || !auth()->user()->hasRole($role)) {
-            return response()->json(['message' => 'Unauthorized. Access denied.'], 403);
+        // if (!auth()->check() || !auth()->user()->hasRole($role)) {
+        //     return response()->json(['message' => 'Unauthorized. Access denied.'], 403);
+        // }
+
+        if (!in_array($request->user()->role, $roles)) {
+            abort(403, 'Unauthorized action.');
         }
 
         return $next($request);

@@ -1,4 +1,3 @@
-import ButtonPrimary from '@/Components/ButtonPrimary';
 import { Link, Head } from '@inertiajs/react';
 
 export default function Homepage() {
@@ -21,12 +20,6 @@ export default function Homepage() {
               <span className="text-red-600">{' Java Programming '}</span>
               With Enjoy!
             </p>
-            {/* <Link
-              href={route('exercise')}
-              className="py-4 font-body font-semibold"
-            >
-              <ButtonPrimary>Open Exercise</ButtonPrimary>
-            </Link> */}
           </div>
         </div>
       </div>

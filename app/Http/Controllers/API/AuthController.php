@@ -16,13 +16,13 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|email',
             'password' => 'required',
-            'confirm_password' => 'required|same:password'
+            'confirm_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Ada kesalahan',
+                'message' => 'Terjadi Kesalahan',
                 'data' => $validator->errors()
             ]);
         }
@@ -36,43 +36,28 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Sukses Register',
+            'message' => 'Selamat, Registrasi Anda Berhasil',
             'data' => $success
         ]);
     }
 
     public function login(Request $request)
     {
-        // if (Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-        //     $auth = Auth::user();
-        //     $success['token'] = $auth->createToken('auth_token')->plainTextToken;
-        //     $success['name'] = $auth->name;
-
-        //     return response()->json([
-        //         'success' => true,
-        //         'message' => 'Login Berhasil',
-        //         'data' => $success
-        //     ]);
-        // } else {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Cek kembali email dan password anda',
-        //         'data' => null
-        //     ]);
-        // }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
             $success['token'] = $auth->createToken('auth_token')->plainTextToken;
             $success['name'] = $auth->name;
+            $success['role'] = $auth->role_id;
+            dd($request->user());
 
-            if ($auth->role_asa == '1') {
-                return response()->json(['success' => true, 'message' => 'Login Berhasil sebagai admin', 'data' => $success]);
+            if ($auth->role_id === 1) {
+                return response()->json(['success' => true, 'message' => 'Masuk Sebagai Admin User', 'data' => $success]);
             } else {
-                return response()->json(['success' => true, 'message' => 'Login Berhasil sebagai pengguna biasa', 'data' => $success]);
+                return response()->json(['success' => true, 'message' => 'Masuk Sebagai Common User', 'data' => $success]);
             }
         } else {
-            return response()->json(['success' => false, 'message' => 'Cek kembali email dan password anda', 'data' => null]);
+            return response()->json(['success' => false, 'message' => 'Periksa Email & Kata Sandi']);
         }
     }
 
@@ -80,6 +65,6 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
 
-        return response()->json(['success' => true, 'message' => 'Logout berhasil']);
+        return response()->json(['success' => true, 'message' => 'Logout Berhasil']);
     }
 }

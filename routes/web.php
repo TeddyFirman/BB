@@ -27,10 +27,6 @@ Route::get('/', function () {
     ]);
 })->name('/');
 
-Route::get('/admin', function () {
-    return Inertia::render('Layouts/Admin');
-})->name('admin');
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -41,17 +37,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
+Route::prefix('admin')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
+})->middleware(['auth:sanctum', 'role:admin']);
 
-    Route::controller(MateriController::class)->group(function () {
-        Route::get('/materi', 'index');
-        Route::get('/materi/create', 'create');
-        Route::post('/simpanmateri', 'store');
-        Route::get('/materi/{materi}/edit','edit');
-        Route::put('/materi/{materi}', 'update');
-        Route::delete('/materi/{materi}', 'destroy');
-    });
-});
-
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

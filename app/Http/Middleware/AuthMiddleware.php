@@ -26,11 +26,10 @@ class AuthMiddleware
     {
         $user = $request->user();
 
-        if ($user && isset($user->peran_id)) {
-            return $user->peran_id == 1;
+        if ($user && isset($user->role_id)) {
+            return $user->role_id == 1;
         } else {
             return false;
         }
     }
-
 }

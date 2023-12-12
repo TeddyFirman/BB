@@ -12,14 +12,9 @@ class MateriController extends Controller
 {
     public function index()
     {
-        return Inertia::render('AdminMateri');
-    }
+        $materials = Subject::all();
 
-    public function indexx()
-    {
-        $materis = Subject::all();
-
-        return response()->json(['data' => $materis]);
+        return response()->json(['data' => $materials], 200);
     }
 
     public function create()
@@ -58,7 +53,6 @@ class MateriController extends Controller
 
         $materi->delete();
 
-        return response()->json(['message' => 'Data berhasil dihapus'],200);
+        return response()->json(['message' => 'Data berhasil dihapus'], 200);
     }
-
 }
