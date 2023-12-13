@@ -43,23 +43,29 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $auth = Auth::user();
             $success['token'] = $auth->createToken('auth_token')->plainTextToken;
             $success['name'] = $auth->name;
-            $success['role'] = $auth->role_id;
-            dd($request->user());
+            // $success['role'] = $auth->role_id;
 
-            if ($auth->role_id === 1) {
-                return response()->json(['success' => true, 'message' => 'Masuk Sebagai Admin User', 'data' => $success]);
+            if ($auth->hasRole('admin')) {
+                $success['role'] = 'admin';
+                $message = 'Login Berhasil sebagai admin';
+            } elseif ($auth->hasRole('user')) {
+                $success['role'] = 'user';
+                $message = 'Login Berhasil sebagai pengguna biasa';
             } else {
-                return response()->json(['success' => true, 'message' => 'Masuk Sebagai Common User', 'data' => $success]);
+                $success['role'] = 'Anda siapa?';
+                $message = 'Anda tidak memiliki peran yang valid';
             }
+
+            return response()->json(['success' => true, 'message' => $message, 'data' => $success]);
         } else {
             return response()->json(['success' => false, 'message' => 'Periksa Email & Kata Sandi']);
         }
     }
+
 
     public function logout(Request $request)
     {
