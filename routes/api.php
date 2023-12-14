@@ -26,14 +26,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 // Route::group(['middleware' => [\Spatie\Permission\Middleware\RoleMiddleware::using('admin')]], function () {
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Route::group(['middleware' => ['role:admin']],function () {
 
     // materi
-    Route::get('admin/materi', [MateriController::class, 'index']);
+    Route::get('admin/materi', [MateriController::class, 'index'])->name('admin.materi');
     Route::post('admin/materi', [MateriController::class, 'store']);
     Route::put('admin/materi/{id}', [MateriController::class, 'update']);
     Route::delete('admin/materi/{id}', [MateriController::class, 'destroy']);

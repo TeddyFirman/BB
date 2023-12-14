@@ -1,15 +1,26 @@
-import { Fragment } from 'react';
+import axios from 'axios';
+import { router } from '@inertiajs/react';
+import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export default function Modal({ children, isOpen, setIsOpen, onClick, title }) {
+export default function EditSubject({ isOpen, setIsOpen, item }) {
+  const [subject, setSubject] = useState('');
+
+  const updateSubject = async () => {
+    await axios
+      .put(`/api/admin/materi/${item.id}`, { subject })
+      .then(() => {
+        setIsOpen(false);
+        router.visit(route('admin.material'));
+      })
+      .catch((error) => {
+        console.log('Gagal Memperbarui Materi', error);
+      });
+  };
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => setIsOpen(false)}
-        >
+        <Dialog as="div" className="relative z-10" onClose={setIsOpen}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -38,23 +49,38 @@ export default function Modal({ children, isOpen, setIsOpen, onClick, title }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    {title ? title : 'Modal Title'}
+                    Ubah Materi
                   </Dialog.Title>
-                  <div className="h-full py-2.5">{children}</div>
+                  <div className="h-full py-2.5">
+                    <form method="POST" className="h-full">
+                      <div className="">
+                        <label className="block py-2">Judul Materi</label>
+                        <input
+                          type="text"
+                          name="subject"
+                          value={subject || item.subject}
+                          onChange={(event) => {
+                            setSubject(event.target.value);
+                          }}
+                          className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
+                        />
+                      </div>
+                    </form>
+                  </div>
 
                   <div className="space-x-2 font-body">
                     <button
                       className="justify-center rounded border border-transparent bg-blue-400 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none"
-                      onClick={onClick}
+                      onClick={updateSubject}
                     >
-                      Simpan
+                      Perbarui
                     </button>
                     <button
                       type="button"
                       className="justify-center rounded border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-red-200 focus:outline-none"
                       onClick={() => setIsOpen(false)}
                     >
-                      Tutup
+                      Batal
                     </button>
                   </div>
                 </Dialog.Panel>

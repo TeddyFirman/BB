@@ -37,8 +37,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::prefix('admin')->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index']);
-})->middleware(['auth:sanctum', 'role:admin']);
+Route::prefix('/admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/material',  [MateriController::class, 'view'])->name('admin.material');
+});
 
 require __DIR__ . '/auth.php';

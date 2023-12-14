@@ -1,52 +1,69 @@
-import { Link } from "@inertiajs/react";
+import { Link } from '@inertiajs/react';
+import axios from 'axios';
 
 export default function Sidebar() {
-    return (
-        <>
-        <h1 className="sr-only">Sidebars examples</h1>
-        <div className="flex flex-col flex-shrink-0 p-3 text-white bg-gray-900" style={{ width: 280 }}>
-            <Link href="/admin/dashboard" className="flex items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                <svg className="bi h-6 w-6" viewBox="0 0 24 24" fill="currentColor"></svg>
-                <span className="text-xl ml-2 font-bold">Admin Panel</span>
+  const submit = () => {
+    axios
+      .post('/api/logout')
+      .then((response) => {
+        alert('Berhasil Logout');
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  const currentRoute = window.location.pathname;
+  return (
+    <>
+      <div className="flex w-56 flex-col bg-gray-800">
+        <Link
+          href="dashboard"
+          className="flex flex-row items-center justify-center font-body text-white"
+        >
+          <span className="py-2.5 text-xl font-bold">Admin Panel</span>
+        </Link>
+        <hr className="mx-2 border-gray-600" />
+        <ul className="flex h-full flex-col space-y-2.5 p-2 font-body">
+          <li>
+            <Link
+              href={route('admin.dashboard')}
+              className={`text-white hover:text-red-400 ${
+                currentRoute === '/admin/dashboard'
+                  ? 'font-bold text-red-400'
+                  : ''
+              }`}
+              aria-current="page"
+            >
+              Dashboard
             </Link>
-            <hr className="border-gray-700" />
-            <ul className="flex flex-col mb-auto">
-                <li className="my-2">
-                    <Link
-                        href="dashboard"
-                        className={`text-white ${
-                            window.location.pathname === "/dashboard" ? "font-bold" : ""
-                        }`}
-                        aria-current="page"
-                    >
-                        Dashboard
-                    </Link>
-                </li>
-                <li className="my-2">
-                    <Link
-                        href="materi"
-                        className={`text-white ${
-                            window.location.pathname === "/materi" ? "font-bold" : ""
-                        }`}
-                        aria-current="page"
-                    >
-                        Materi
-                    </Link>
-                </li>
-            </ul>
-            <hr className="border-gray-700" />
-            <div>
-                <Link
-                    href="/logout"
-                    method="post"
-                    className="flex items-center text-white text-decoration-none"
-                    as="button"
-                >
-                    Logout
-                </Link>
-            </div>
+          </li>
+          <li>
+            <Link
+              href={route('admin.material')}
+              className={`text-white hover:text-red-400 ${
+                currentRoute === '/admin/material'
+                  ? 'font-bold text-red-400'
+                  : ''
+              }`}
+              aria-current="page"
+            >
+              Materi
+            </Link>
+          </li>
+        </ul>
+        <hr className="mx-2 border-gray-600" />
+        <div className="p-2 font-body">
+          <Link
+            href={route('logout')}
+            method="post"
+            as="button"
+            className="text-decoration-none flex items-center text-white"
+          >
+            Logout
+          </Link>
         </div>
-        <div className="border-r border-gray-700" style={{ width: 0 }}></div>
+      </div>
     </>
-    );
+  );
 }

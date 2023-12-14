@@ -10,16 +10,16 @@ use Inertia\Inertia;
 
 class MateriController extends Controller
 {
+    public function view()
+    {
+        return Inertia::render('Admin/Materi/Index');
+    }
+
     public function index()
     {
         $materials = Subject::all();
 
         return response()->json(['data' => $materials], 200);
-    }
-
-    public function create()
-    {
-        return Inertia::render('AdminMateriCreate');
     }
 
     public function store(Request $request)
@@ -32,7 +32,7 @@ class MateriController extends Controller
             'subject' => $request->subject
         ]);
 
-        return response()->json(['message' => 'Data berhasil disimpan'], 201);
+        return to_route('admin.materi');
     }
 
     public function update(MateriFormRequest $request, $id)
