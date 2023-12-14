@@ -4,15 +4,20 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Bab;
 use App\Models\Subject;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BabFormRequest;
+use Inertia\Inertia;
 
 class BabController extends Controller
 {
+    public function view()
+    {
+        return Inertia::render('Admin/Bab/Index');
+    }
+
     public function index()
     {
-        $babs = Bab::all();
+        $babs = Bab::with('subject')->get();
 
         return response()->json(['data' => $babs]);
     }

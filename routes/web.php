@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\MateriController;
+use App\Http\Controllers\Admin\BabController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
 Route::prefix('/admin')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/material',  [MateriController::class, 'view'])->name('admin.material');
+    Route::get('/chapter',  [BabController::class, 'view'])->name('admin.chapter');
 });
 
 require __DIR__ . '/auth.php';
