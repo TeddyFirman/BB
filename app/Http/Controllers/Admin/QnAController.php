@@ -6,9 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class QnAController extends Controller
 {
+
+    public function view()
+    {
+        return Inertia::render('Admin/Question/Index');
+    }
+
     public function index()
     {
         $questions = Question::with('answers')->get();

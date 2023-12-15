@@ -4,10 +4,9 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import axios from 'axios';
-import { redirect } from 'react-router-dom';
 
 export default function Login({ status }) {
   const { data, setData, processing, errors, reset } = useForm({
@@ -30,7 +29,11 @@ export default function Login({ status }) {
     axios
       .post('/api/login', { email, password })
       .then((response) => {
-        console.log(response.data);
+        if (response.data.data.role == 'admin') {
+          router.visit(route('admin.dashboard'));
+        } else {
+          router.visit(route('dashboard'));
+        }
       })
       .catch((error) => {
         console.log(error);
