@@ -1,22 +1,37 @@
 import axios from 'axios';
-import { Fragment, useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
 import { router } from '@inertiajs/react';
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useState, useEffect } from 'react';
 
-export default function EditQuestion({ isOpen, setIsOpen, items, item }) {
+export default function EditQuestion({ isOpen, setIsOpen, items }) {
   const [is_correct, setIsCorrect] = useState('');
   const [question, setQuestion] = useState('');
+  const [answers, setAnswers] = useState();
+  const [status, setStatus] = useState();
   const [answer, setAnswer] = useState('');
 
-  const addQuestion = async () => {
+  useEffect(() => {
+    const getAnswers = async () => {
+      try {
+        const response = await axios.get(`/api/admin/qna-details/${items.id}`);
+        setAnswers(response.data.answers.answer);
+        setStatus(response.data.answers.is_correct);
+      } catch (error) {
+        console.error('Error Fetching Q&A:', error);
+      }
+    };
+    getAnswers();
+  }, [items.id]);
+
+  const editQuestion = async () => {
     await axios
-      .post('/api/admin/qna', { question, answer, is_correct })
+      .put(`/api/admin/qna/${items.id}`, { question, answer, is_correct })
       .then((response) => {
         setIsOpen(false);
         router.visit(route('admin.question.answer'));
       })
       .catch((error) => {
-        console.log('Gagal Menambahkan Materi', error);
+        console.log('Gagal Memperbarui Question', error);
       });
   };
   return (
@@ -72,7 +87,7 @@ export default function EditQuestion({ isOpen, setIsOpen, items, item }) {
                             <input
                               type="text"
                               name="answer"
-                              value={answer}
+                              value={answer || answers}
                               onChange={(e) => setAnswer(e.target.value)}
                               className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
                             />
@@ -86,6 +101,9 @@ export default function EditQuestion({ isOpen, setIsOpen, items, item }) {
                               onChange={(e) => setIsCorrect(e.target.value)}
                               className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
                             >
+                              <option value={status}>
+                                {status === 1 ? 'Benar' : 'Salah'}
+                              </option>
                               <option className="h-max" key={0} value={0}>
                                 Salah
                               </option>
@@ -102,7 +120,7 @@ export default function EditQuestion({ isOpen, setIsOpen, items, item }) {
                   <div className="space-x-2 font-body">
                     <button
                       className="justify-center rounded border border-transparent bg-blue-400 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none"
-                      onClick={addQuestion}
+                      onClick={editQuestion}
                     >
                       Simpan
                     </button>

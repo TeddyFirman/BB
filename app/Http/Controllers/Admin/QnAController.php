@@ -43,7 +43,7 @@ class QnAController extends Controller
             ]);
             // }
 
-            return response()->json(['success' => true, 'msg' => 'QnA berhasil ditambahkan']);
+            return response()->json(['success' => true, 'msg' => 'QnA Berhasil Ditambahkan']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'msg' => $e->getMessage()]);
         }
@@ -51,11 +51,9 @@ class QnAController extends Controller
 
     public function indexDetail(Request $request, $id)
     {
-        $question = Question::with('answers')->findOrFail($id);
+        $answers = Answer::where('question_id', $id)->first();
 
-        $answers = $question->answers;
-
-        return response()->json(['question' => $question, 'answers' => $answers]);
+        return response()->json(['answers' => $answers]);
     }
 
     public function update(Request $request, $id)
@@ -87,9 +85,9 @@ class QnAController extends Controller
                 }
             }
 
-            return response()->json(['success' => true, 'msg' => 'Pertanyaan dan/atau jawaban berhasil diperbarui']);
+            return response()->json(['success' => true, 'message' => 'Pertanyaan Dan/Atau Jawaban Berhasil Diperbarui']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'msg' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }
 
@@ -101,9 +99,9 @@ class QnAController extends Controller
 
             Question::destroy($id);
 
-            return response()->json(['success' => true, 'msg' => 'Pertanyaan dan jawaban terkait berhasil dihapus']);
+            return response()->json(['success' => true, 'message' => 'Pertanyaan & Jawaban Berhasil Dihapus']);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'msg' => $e->getMessage()]);
+            return response()->json(['success' => false, 'messgae' => $e->getMessage()]);
         }
     }
 }
