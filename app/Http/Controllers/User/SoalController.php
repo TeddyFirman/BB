@@ -23,6 +23,11 @@ class SoalController extends Controller
         return Inertia::render('Student/Chapter/Index');
     }
 
+    public function viewExercise()
+    {
+        return Inertia::render('Student/Exercise/Index');
+    }
+
     public function indexSubject()
     {
         $materis = Subject::all();

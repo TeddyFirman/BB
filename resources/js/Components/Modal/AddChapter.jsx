@@ -1,3 +1,4 @@
+import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Markdown from 'react-markdown';
@@ -7,19 +8,27 @@ import { Fragment, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
+import Loading from '../Loading';
 
-export default function AddChapter({ isOpen, setIsOpen, items }) {
+const fetcher = (url) => axios.get(url).then((response) => response.data);
+
+export default function AddChapter({ isOpen, setIsOpen }) {
   const {
     watch,
     control,
     register,
     handleSubmit,
-    formState: { errors, isValid, isLoading },
+    formState: { errors, isValid },
   } = useForm();
 
   const alertWithSwal = withReactContent(Swal);
 
   const [contents, setContents] = useState('');
+
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const { data, isLoading } = useSWR(`/api/admin/materi`, fetcher);
+
+  const subjects = data?.data;
 
   setTimeout(() => {
     const input = watch('pertanyaan');
@@ -33,7 +42,8 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
           'Content-Type': 'application/json',
         },
       })
-      .then(() => {
+      .then((res) => {
+        console.log(res);
         alertWithSwal.fire({
           timer: 3000,
           timerProgressBar: true,
@@ -46,7 +56,7 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
           ),
           html: (
             <div className="text-center font-medium text-green-400">
-              Bab
+              Sub-Materi
               {` ${data.judul} `}
               Berhasil Ditambahkan
             </div>
@@ -69,7 +79,7 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
           ),
           html: (
             <div className="text-center font-medium text-red-400">
-              Bab
+              Sub Materi
               {` ${data.judul} `}
               Gagal Ditambahkan
             </div>
@@ -109,7 +119,7 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Tambah Bab
+                    Tambah Sub-Materi
                   </Dialog.Title>
                   <div className="h-full">
                     <form
@@ -117,90 +127,99 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
                       method="POST"
                       className="h-full"
                     >
-                      <div className="w-full">
-                        <div className="flex w-full flex-row space-x-2">
-                          <div className="flex w-1/2 flex-col">
-                            <label className="block py-2">Bagian Materi</label>
-                            <select
-                              className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
-                              name="subject"
-                              {...register('subject_id', {
-                                required: true,
-                              })}
-                            >
-                              {items.map((item) => (
-                                <option
-                                  className="h-max"
-                                  key={item.id}
-                                  value={item.id}
-                                >
-                                  {item.subject || isLoading}
-                                </option>
-                              ))}
-                            </select>
-                            {errors.subject &&
-                              errors.subject.type === 'required' && (
-                                <p className="font-head text-sm text-red-400">
-                                  Pilih Bagian Materi...
-                                </p>
-                              )}
+                      {isLoading ? (
+                        <Loading />
+                      ) : (
+                        <div className="w-full">
+                          <div className="flex w-full flex-row space-x-2">
+                            <div className="flex w-1/2 flex-col">
+                              <label className="block py-2">
+                                Bagian Materi
+                              </label>
+                              <select
+                                className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                name="subject"
+                                {...register('subject_id', {
+                                  required: true,
+                                })}
+                              >
+                                {Object.values(subjects).map((item, index) => (
+                                  <option
+                                    className="h-max"
+                                    key={index}
+                                    value={item?.id}
+                                  >
+                                    {item?.subject}
+                                  </option>
+                                ))}
+                              </select>
+                              {errors.subject &&
+                                errors.subject.type === 'required' && (
+                                  <p className="font-head text-sm text-red-400">
+                                    Pilih Materi...
+                                  </p>
+                                )}
+                            </div>
+                            <div className="flex w-1/2 flex-col">
+                              <label className="block py-2">
+                                Judul Sub-Materi
+                              </label>
+                              <input
+                                type="text"
+                                name="chapter"
+                                className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                {...register('judul', {
+                                  required: true,
+                                })}
+                              />
+                              {errors.chapter &&
+                                errors.chapter.type === 'required' && (
+                                  <p className="font-head text-sm text-red-400">
+                                    Masukkan Judul Sub-Materi...
+                                  </p>
+                                )}
+                            </div>
                           </div>
-                          <div className="flex w-1/2 flex-col">
-                            <label className="block py-2">Judul Bab</label>
-                            <input
-                              type="text"
-                              name="chapter"
-                              className="w-full rounded-sm border-gray-200 p-1 font-body text-gray-600 focus:border-blue-200"
-                              {...register('judul', {
-                                required: true,
-                              })}
-                            />
-                            {errors.chapter &&
-                              errors.chapter.type === 'required' && (
-                                <p className="font-head text-sm text-red-400">
-                                  Masukkan Judul Bab...
-                                </p>
-                              )}
+                          <div className="flex w-full flex-row space-x-2">
+                            <div className="w-1/2">
+                              <label className="block py-2">Pertanyaan</label>
+                              <Controller
+                                name="question"
+                                control={control}
+                                render={({ ...field }) => (
+                                  <>
+                                    <textarea
+                                      {...field}
+                                      type="text"
+                                      name="question"
+                                      className="h-48 w-full resize-none rounded-sm border-gray-200 p-1.5 font-body text-gray-600 focus:border-blue-200"
+                                      {...register('pertanyaan', {
+                                        required: true,
+                                      })}
+                                    />
+                                    {errors.question &&
+                                      errors.question.type === 'required' && (
+                                        <p className="font-head text-sm text-red-400">
+                                          Masukkan Pertanyaan...
+                                        </p>
+                                      )}
+                                  </>
+                                )}
+                              />
+                            </div>
+                            <div className="w-1/2">
+                              <label className="block py-2">Pratinjau</label>
+                              <Markdown
+                                rehypePlugins={rehypePrism}
+                                className="h-48 w-full rounded-sm border border-gray-200 p-1.5 font-body text-gray-600"
+                              >
+                                {contents}
+                              </Markdown>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex w-full flex-row space-x-2">
-                          <div className="w-1/2">
-                            <label className="block py-2">Pertanyaan</label>
-                            <Controller
-                              name="question"
-                              control={control}
-                              render={({ ...field }) => (
-                                <>
-                                  <textarea
-                                    {...field}
-                                    type="text"
-                                    name="question"
-                                    className="h-48 w-full resize-none rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
-                                    {...register('pertanyaan', {
-                                      required: true,
-                                    })}
-                                  />
-                                  {errors.question &&
-                                    errors.question.type === 'required' && (
-                                      <p className="font-head text-sm text-red-400">
-                                        Masukkan Pertanyaan...
-                                      </p>
-                                    )}
-                                </>
-                              )}
-                            />
-                          </div>
-                          <div className="w-1/2">
-                            <label className="block py-2">Pratinjau</label>
-                            <Markdown
-                              rehypePlugins={rehypePrism}
-                              className="h-48 w-full rounded-sm border border-gray-200 p-1 font-body text-gray-600"
-                            >
-                              {contents}
-                            </Markdown>
-                          </div>
-                        </div>
-                      </div>
+                      )}
+
                       <div className="space-x-2 font-body">
                         <button
                           type="submit"

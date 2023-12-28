@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { router } from '@inertiajs/react';
 import { Fragment } from 'react';
+import { router } from '@inertiajs/react';
 import { Dialog, Transition } from '@headlessui/react';
 
 export default function DeleteQuestion({ isOpen, setIsOpen, item }) {
@@ -47,10 +47,10 @@ export default function DeleteQuestion({ isOpen, setIsOpen, item }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Hapus Materi
+                    Hapus Pertanyaan
                   </Dialog.Title>
                   <div className="h-full py-2.5 font-body text-gray-600">
-                    {`Anda Akan Menghapus Materi `}
+                    {`Anda Akan Menghapus Pertanyaan `}
                     <span className="font-bold text-red-600">{`${item.question}`}</span>
                     {` ?`}
                   </div>

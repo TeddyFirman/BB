@@ -7,15 +7,16 @@ import { Fragment, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
+import useSWR from 'swr';
 
-export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
+export default function EditChapter({ isOpen, setIsOpen, items }) {
   const {
     watch,
     control,
     register,
     setValue,
     handleSubmit,
-    formState: { errors, isValid, isDirty, isLoading },
+    formState: { errors, isValid, isDirty },
   } = useForm();
 
   const alertWithSwal = withReactContent(Swal);
@@ -27,9 +28,13 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
     setContents(input);
   }, 5000);
 
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const { data, isLoading } = useSWR(`/api/admin/materi`, fetcher);
+  const subjects = data?.data;
+
   async function updateSubject(data) {
     await axios
-      .put(`/api/admin/bab/${itemChapter.id}`, data, {
+      .put(`/api/admin/bab/${items.id}`, data, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -47,7 +52,7 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
           ),
           html: (
             <div className="text-center font-medium text-green-400">
-              Bab
+              Sub-Materi
               {` ${data.judul} `}
               Berhasil Diperbarui
             </div>
@@ -70,7 +75,7 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
           ),
           html: (
             <div className="text-center font-medium text-red-400">
-              Bab
+              Sub-Materi
               {` ${data.judul} `}
               Gagal Diperbarui
             </div>
@@ -79,10 +84,10 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
       });
   }
   useEffect(() => {
-    setValue('judul', itemChapter?.judul || isLoading);
-    setValue('subject_id', itemChapter?.subject_id || isLoading);
-    setValue('pertanyaan', itemChapter?.pertanyaan || isLoading);
-  }, [setValue, itemChapter?.id, itemChapter?.judul, itemChapter?.pertanyaan]);
+    setValue('judul', items?.judul);
+    setValue('subject_id', items?.subject_id);
+    setValue('pertanyaan', items?.pertanyaan);
+  }, [setValue, items?.pertanyaan]);
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -115,7 +120,7 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Ubah Bab
+                    Ubah Sub-Materi
                   </Dialog.Title>
                   <div className="h-full py-2.5">
                     <form
@@ -134,15 +139,19 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
                                 require: true,
                               })}
                             >
-                              {items.map((item) => (
-                                <option
-                                  className="h-max"
-                                  key={item.id}
-                                  value={item.id}
-                                >
-                                  {item.subject}
-                                </option>
-                              ))}
+                              {isLoading ? (
+                                <option className="h-max">Sedang Memuat</option>
+                              ) : (
+                                Object.values(subjects).map((item, index) => (
+                                  <option
+                                    className="h-max"
+                                    key={index}
+                                    value={item?.id}
+                                  >
+                                    {item?.subject}
+                                  </option>
+                                ))
+                              )}
                             </select>
                             {errors.subject &&
                               errors.subject.type === 'required' && (
@@ -152,7 +161,9 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
                               )}
                           </div>
                           <div className="flex w-1/2 flex-col">
-                            <label className="block py-2">Judul Bab</label>
+                            <label className="block py-2">
+                              Judul Sub-Materi
+                            </label>
                             <input
                               type="text"
                               name="chapter"
@@ -164,7 +175,7 @@ export default function EditChapter({ isOpen, setIsOpen, items, itemChapter }) {
                             {errors.chapter &&
                               errors.chapter.type === 'required' && (
                                 <p className="font-head text-sm text-red-400">
-                                  Masukkan Judul Bab...
+                                  Masukkan Judul Sub-Materi...
                                 </p>
                               )}
                           </div>

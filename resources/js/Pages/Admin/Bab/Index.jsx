@@ -1,63 +1,43 @@
 import axios from 'axios';
 import Layout from '@/Pages/Layout/Layout';
 import { Head } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
-import DeleteSubject from '@/Components/Modal/DeleteSubject';
+import React, { useState } from 'react';
 import AddChapter from '@/Components/Modal/AddChapter';
 import EditChapter from '@/Components/Modal/EditChapter';
 import DeleteChapter from '@/Components/Modal/DeleteChapter';
+import useSWR from 'swr';
+import Loading from '@/Components/Loading';
 
 export default function Index() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [chapter, setChapter] = useState([]);
-  const [chapters, setChapters] = useState([]);
-  const [subjects, setSubjects] = useState([]);
 
-  // Read Bab
-  useEffect(() => {
-    const getChapter = async () => {
-      try {
-        const response = await axios.get('/api/admin/bab');
-        setChapters(response.data.data);
-      } catch (error) {
-        console.error('Error Fetching Material:', error);
-      }
-    };
-
-    getChapter();
-  }, []);
-
-  useEffect(() => {
-    const getMaterial = async () => {
-      try {
-        const response = await axios.get('/api/admin/materi');
-        setSubjects(response.data.data);
-      } catch (error) {
-        console.error('Error Fetching Material:', error);
-      }
-    };
-    getMaterial();
-  }, []);
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const { data: chapters, isLoading: chaptersLoading } = useSWR(
+    `/api/admin/bab`,
+    fetcher,
+  );
+  let getChapters = chapters?.data;
+  const chapterLength = getChapters?.length;
   return (
     <Layout>
-      <Head title="Materi" />
+      <Head title="Sub-Materi" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
-        <AddChapter isOpen={openAdd} setIsOpen={setOpenAdd} items={subjects} />
+        <AddChapter isOpen={openAdd} setIsOpen={setOpenAdd} />
         <EditChapter
+          items={chapter}
           isOpen={openEdit}
           setIsOpen={setOpenEdit}
-          items={subjects}
-          itemChapter={chapter}
         />
         <DeleteChapter
+          items={chapter}
           isOpen={openDelete}
           setIsOpen={setOpenDelete}
-          item={chapter}
         />
         <h3 className="font-head text-xl font-semibold text-gray-800">
-          Halaman Bab
+          Sub-Materi
         </h3>
         <button
           onClick={() => setOpenAdd(true)}
@@ -77,51 +57,68 @@ export default function Index() {
               d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          Bab
+          Sub-Materi
         </button>
       </div>
       <div className="my-2">
         <div className="overflow-x-auto">
-          <table className="w-full table-auto border-collapse border border-gray-200">
-            <thead>
-              <tr className="font-head bg-gray-100 text-gray-800">
-                <th className="px-4 py-2">No</th>
-                <th className="px-4 py-2">Bagian Materi</th>
-                <th className="px-4 py-2">Judul Bab</th>
-                <th className="px-4 py-2">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.values(chapters).map((item, index) => (
-                <tr key={index} className="text-center font-body text-gray-600">
-                  <td>{index + 1}</td>
-                  <td>{item.subject.subject}</td>
-                  <td>{item.judul}</td>
-                  <td className="flex flex-row justify-center space-x-4 py-2">
-                    <button
-                      onClick={() => {
-                        setOpenEdit(true);
-                        setChapter(item);
-                      }}
-                      className="rounded bg-green-400 px-2.5 py-2 text-white hover:bg-green-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => {
-                        setOpenDelete(true);
-                        setChapter(item);
-                      }}
-                      className="rounded bg-red-400 px-2.5 py-2 text-white hover:bg-red-600"
-                      data-confirm-delete="true"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {chaptersLoading ? (
+            <Loading />
+          ) : (
+            <table className="w-full table-auto border-collapse border border-gray-200">
+              {chapterLength === 0 ? (
+                <div className="flex flex-row items-center justify-between rounded-sm border border-gray-200 bg-gray-100 p-2">
+                  <p className="w-full text-center font-semibold text-gray-800">
+                    Sub-Materi Belum Tersedia, Silahkan Tambah Sub-Materi
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <thead>
+                    <tr className="font-head bg-gray-100 text-gray-800">
+                      <th className="px-4 py-2">No</th>
+                      <th className="px-4 py-2">Sub-Materi</th>
+                      <th className="px-4 py-2">Materi</th>
+                      <th className="px-4 py-2">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(getChapters).map((item, index) => (
+                      <tr
+                        key={index}
+                        className="text-center font-body text-gray-600"
+                      >
+                        <td>{index + 1}</td>
+                        <td>{item?.judul}</td>
+                        <td>{item?.subject?.subject}</td>
+                        <td className="flex flex-row justify-center space-x-4 py-2">
+                          <button
+                            onClick={() => {
+                              setOpenEdit(true);
+                              setChapter(item);
+                            }}
+                            className="rounded bg-green-400 px-2.5 py-2 text-white hover:bg-green-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => {
+                              setOpenDelete(true);
+                              setChapter(item);
+                            }}
+                            className="rounded bg-red-400 px-2.5 py-2 text-white hover:bg-red-600"
+                            data-confirm-delete="true"
+                          >
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </>
+              )}
+            </table>
+          )}
         </div>
       </div>
     </Layout>

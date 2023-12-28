@@ -23,6 +23,7 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
         },
       })
       .then((response) => {
+        console.log(response);
         alertWithSwal.fire({
           timer: 3000,
           timerProgressBar: true,
@@ -35,7 +36,7 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
           ),
           html: (
             <div className="text-center font-medium text-green-400">
-              Quiz Berhasil Ditambahkan
+              Kuis Berhasil Ditambahkan
             </div>
           ),
         });
@@ -56,12 +57,14 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
           ),
           html: (
             <div className="text-center font-medium text-red-400">
-              Quiz Gagal Ditambahkan
+              Kuis Gagal Ditambahkan
             </div>
           ),
         });
       });
   }
+  const questionItem = questions?.data;
+  const chapterItem = chapters?.data;
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -94,7 +97,7 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Tambah Quiz
+                    Tambah Kuis
                   </Dialog.Title>
                   <div className="h-full">
                     <form
@@ -105,7 +108,9 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
                       <div className="w-full">
                         <div className="flex w-full flex-col space-y-2">
                           <div className="flex w-full flex-col">
-                            <label className="block py-2">Pilih Bab</label>
+                            <label className="block py-2">
+                              Pilih Sub-Materi
+                            </label>
                             <select
                               name="chapter"
                               className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
@@ -113,13 +118,13 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
                                 required: true,
                               })}
                             >
-                              {Object.values(chapters).map((item, index) => (
+                              {Object.values(chapterItem).map((item, index) => (
                                 <option
                                   key={index}
                                   className="h-max"
                                   value={item?.id}
                                 >
-                                  {item?.judul} - {item?.subject?.subject}
+                                  {item?.judul}
                                 </option>
                               ))}
                             </select>
@@ -132,23 +137,26 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
                           </div>
                           <div className="flex flex-row space-x-2.5">
                             <div className="flex w-full flex-col">
-                              {Object.values(questions).map((item, index) => (
-                                <div className="flex flex-row items-center space-x-2 py-2">
-                                  <input
-                                    key={item.id}
-                                    value={item.id}
-                                    type="checkbox"
-                                    name={`question`}
-                                    className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
-                                    {...register(`question_id`, {
-                                      required: true,
-                                    })}
-                                  />
-                                  <label className="font-body text-gray-600">
-                                    {item.question}
-                                  </label>
-                                </div>
-                              ))}
+                              <p>Pilih Pertanyaan Kuis: </p>
+                              {Object.values(questionItem).map(
+                                (item, index) => (
+                                  <div className="flex flex-row items-center space-x-2 py-2">
+                                    <input
+                                      key={index}
+                                      value={item?.id}
+                                      type="checkbox"
+                                      name={`question`}
+                                      className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
+                                      {...register(`question_id`, {
+                                        required: true,
+                                      })}
+                                    />
+                                    <label className="font-body text-gray-600">
+                                      {item?.question}
+                                    </label>
+                                  </div>
+                                ),
+                              )}
                             </div>
                           </div>
                         </div>

@@ -5,54 +5,42 @@ import React, { useEffect, useState } from 'react';
 import AddQuiz from '@/Components/Modal/AddQuiz';
 import EditQuiz from '@/Components/Modal/EditQuiz';
 import DeleteQuiz from '@/Components/Modal/DeleteQuiz';
+import useSWR from 'swr';
+import Loading from '@/Components/Loading';
 
 export default function Index() {
   const [quiz, setQuiz] = useState([]);
   const [chapter, setChapter] = useState([]);
   const [question, setQuestion] = useState([]);
-  const [questions, setQuestions] = useState([]);
   const [questionId, setQuestionId] = useState([]);
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  useEffect(() => {
-    const getQuiz = async () => {
-      try {
-        const response = await axios.get('/api/admin/get-question-quiz');
-        setQuiz(response.data.data);
-      } catch (error) {
-        console.error('Error Fetching Quiz:', error);
-      }
-    };
-    getQuiz();
-    const getQuestion = async () => {
-      try {
-        const response = await axios.get('/api/admin/qna');
-        setQuestions(response.data.data);
-      } catch (error) {
-        console.error('Error Fetching Question:', error);
-      }
-    };
-    getQuestion();
-    const getChapter = async () => {
-      try {
-        const response = await axios.get('/api/admin/bab');
-        setChapter(response.data.data);
-      } catch (error) {
-        console.error('Error Fetching Chapter:', error);
-      }
-    };
-    getChapter();
-  }, []);
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const { data: quizs, isLoading: quizLoading } = useSWR(
+    `/api/admin/get-question-quiz`,
+    fetcher,
+  );
+  const { data: questions, isLoading: questionLoading } = useSWR(
+    `/api/admin/qna`,
+    fetcher,
+  );
+  const { data: chapters, isLoading: chapterLoading } = useSWR(
+    `/api/admin/bab`,
+    fetcher,
+  );
+
+  const quizsLength = quizs.data.length;
+  let quizItem = quizs?.data;
   return (
     <Layout>
-      <Head title="Materi" />
+      <Head title="Kuis" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
         <AddQuiz
           isOpen={openAdd}
-          chapters={chapter}
+          chapters={chapters}
           questions={questions}
           setIsOpen={setOpenAdd}
         />
@@ -94,48 +82,62 @@ export default function Index() {
       </div>
       <div className="my-2">
         <div className="overflow-x-auto">
-          <table className="w-full table-auto border-collapse border border-gray-200">
-            <thead>
-              <tr className="font-head bg-gray-100 text-gray-800">
-                <th className="px-4 py-2">No</th>
-                <th className="px-4 py-2">Pertanyaan Quiz</th>
-                <th className="px-4 py-2">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {quiz.map((item, index) => (
-                <tr
-                  key={item?.id}
-                  className="text-center font-body text-gray-600"
-                >
-                  <td>{index + 1}</td>
-                  <td>{item?.questions}</td>
-                  <td className="flex flex-row justify-center space-x-4 py-2">
-                    {/* <button
-                      onClick={() => {
-                        setOpenEdit(true);
-                        setQuestion(item);
-                        setQuestionId(item.id);
-                      }}
-                      className="rounded bg-blue-400 px-2.5 py-2 text-white hover:bg-blue-600"
-                    >
-                      Detail
-                    </button> */}
-                    <button
-                      onClick={() => {
-                        setOpenDelete(true);
-                        setQuestion(item);
-                      }}
-                      className="rounded bg-red-400 px-2.5 py-2 text-white hover:bg-red-600"
-                      data-confirm-delete="true"
-                    >
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {quizLoading ? (
+            <Loading />
+          ) : (
+            <table className="w-full table-auto border-collapse border border-gray-200">
+              {quizsLength === 0 ? (
+                <div className="flex flex-row items-center justify-between rounded-sm border border-gray-200 bg-gray-100 p-2">
+                  <p className="w-full text-center font-semibold text-gray-800">
+                    Quiz Belum Tersedia, Silahkan Tambah Quiz
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <thead>
+                    <tr className="font-head bg-gray-100 text-gray-800">
+                      <th className="px-4 py-2">No</th>
+                      <th className="px-4 py-2">Pertanyaan Quiz</th>
+                      <th className="px-4 py-2">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(quizItem).map((item, index) => (
+                      <tr
+                        key={item?.id}
+                        className="text-center font-body text-gray-600"
+                      >
+                        <td>{index + 1}</td>
+                        <td>{item?.questions}</td>
+                        <td className="flex flex-row justify-center space-x-4 py-2">
+                          <button
+                            onClick={() => {
+                              setOpenEdit(true);
+                              setQuestion(item);
+                              setQuestionId(item.id);
+                            }}
+                            className="rounded bg-blue-400 px-2.5 py-2 text-white hover:bg-blue-600"
+                          >
+                            Detail
+                          </button>
+                          <button
+                            onClick={() => {
+                              setOpenDelete(true);
+                              setQuestion(item);
+                            }}
+                            className="rounded bg-red-400 px-2.5 py-2 text-white hover:bg-red-600"
+                            data-confirm-delete="true"
+                          >
+                            Hapus
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </>
+              )}
+            </table>
+          )}
         </div>
       </div>
     </Layout>

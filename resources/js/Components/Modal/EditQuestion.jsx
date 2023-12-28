@@ -1,3 +1,4 @@
+import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { Fragment, useState, useEffect } from 'react';
@@ -7,9 +8,6 @@ import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
 
 export default function EditQuestion({ isOpen, setIsOpen, items }) {
-  const [answers, setAnswers] = useState();
-  const [status, setStatus] = useState();
-
   const {
     register,
     setValue,
@@ -17,18 +15,16 @@ export default function EditQuestion({ isOpen, setIsOpen, items }) {
     formState: { errors, isValid, isDirty },
   } = useForm();
 
-  useEffect(() => {
-    const getAnswers = async () => {
-      try {
-        const response = await axios.get(`/api/admin/qna-details/${items.id}`);
-        setAnswers(response.data.answers.answer);
-        setStatus(response.data.answers.is_correct);
-      } catch (error) {
-        console.error('Error Fetching Q&A:', error);
-      }
-    };
-    getAnswers();
-  }, [items.id]);
+  const alertWithSwal = withReactContent(Swal);
+
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const { data, isLoading } = useSWR(
+    `/api/admin/qna-details/${items.id}`,
+    fetcher,
+  );
+
+  let answers = data?.answers?.answer;
+  let status = data?.answers?.is_correct;
 
   async function updateQuestion(data) {
     await axios
@@ -38,18 +34,54 @@ export default function EditQuestion({ isOpen, setIsOpen, items }) {
         },
       })
       .then((response) => {
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-green-600">
+              Perintah Berhasil
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-green-400">
+              Pertanyaan
+              {` ${data?.question} `}
+              Berhasil Diperbarui
+            </div>
+          ),
+        });
         setIsOpen(false);
         router.visit(route('admin.question.answer'));
       })
       .catch((error) => {
-        console.log('Gagal Memperbarui Question', error);
+        console.log(error);
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-red-600">
+              Perintah Gagal
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-red-400">
+              Pertanyaan
+              {` ${data?.question} `}
+              Gagal Diperbarui
+            </div>
+          ),
+        });
       });
   }
 
   useEffect(() => {
-    setValue('is_correct', status ? status : 'Loading...');
-    setValue('question', items?.question ? items?.question : 'Loading...');
-    setValue('answer', answers ? answers : 'Loading...');
+    setValue('question', items?.question);
+    setValue('is_correct', status);
+    setValue('answer', answers);
   }, [setValue, status, items?.question, answers]);
   return (
     <>
@@ -102,12 +134,20 @@ export default function EditQuestion({ isOpen, setIsOpen, items }) {
                                 required: true,
                               })}
                             >
-                              <option className="h-max" key={0} value={0}>
-                                Salah
-                              </option>
-                              <option className="h-max" key={1} value={1}>
-                                Benar
-                              </option>
+                              {isLoading ? (
+                                <option className="h-max">
+                                  Sedang Memuat...
+                                </option>
+                              ) : (
+                                <>
+                                  <option className="h-max" key={0} value={0}>
+                                    Salah
+                                  </option>
+                                  <option className="h-max" key={1} value={1}>
+                                    Benar
+                                  </option>
+                                </>
+                              )}
                             </select>
                           </div>
                           <div className="flex flex-row space-x-2.5">
@@ -130,14 +170,22 @@ export default function EditQuestion({ isOpen, setIsOpen, items }) {
                             </div>
                             <div className="flex w-full flex-col">
                               <label className="block py-2">Jawaban</label>
-                              <input
-                                type="text"
-                                name="answer"
-                                className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
-                                {...register('answer', {
-                                  required: true,
-                                })}
-                              />
+                              {isLoading ? (
+                                <input
+                                  type="text"
+                                  value="Sedang Memuat..."
+                                  className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                />
+                              ) : (
+                                <input
+                                  type="text"
+                                  name="answer"
+                                  className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                  {...register('answer', {
+                                    required: true,
+                                  })}
+                                />
+                              )}
                               {errors.question &&
                                 errors.question.type === 'required' && (
                                   <p className="font-head text-sm text-red-400">

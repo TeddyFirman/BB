@@ -69,8 +69,8 @@ Route::middleware(['auth:sanctum', 'role:user|admin'])->group(function () {
 
     // Soal
     Route::get('student/materi', [SoalController::class, 'indexSubject']);
-    Route::get('student/bab-materi/{id}', [SoalController::class, 'indexBabMateri']);
     Route::get('student/form-soal/{id}', [SoalController::class, 'indexForm']);
+    Route::get('student/bab-materi/{id}', [SoalController::class, 'indexBabMateri']);
 
     // Jawaban
     Route::post('student/bab-submit', [JawabanController::class, 'store']);

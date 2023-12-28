@@ -3,10 +3,10 @@ import { router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export default function DeleteChapter({ isOpen, setIsOpen, item }) {
+export default function DeleteChapter({ isOpen, setIsOpen, items }) {
   const deleteChapter = async () => {
     await axios
-      .delete(`/api/admin/bab/${item.id}`)
+      .delete(`/api/admin/bab/${items.id}`)
       .then(() => {
         setIsOpen(false);
         router.visit(route('admin.chapter'));
@@ -51,7 +51,7 @@ export default function DeleteChapter({ isOpen, setIsOpen, item }) {
                   </Dialog.Title>
                   <div className="h-full py-2.5 font-body text-gray-600">
                     {`Anda Akan Menghapus Bab `}
-                    <span className="font-bold text-red-600">{`${item.judul}`}</span>
+                    <span className="font-bold text-red-600">{`${items?.judul}`}</span>
                     {` ?`}
                   </div>
 

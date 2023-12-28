@@ -43,7 +43,8 @@ Route::prefix('/admin')->middleware(['auth:sanctum'])->group(function () {
 });
 Route::prefix('/student')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/material', [SoalController::class, 'view'])->name('student.material');
-    Route::get('/material/chapter/{id}', [SoalController::class, 'viewChapter'])->name('student.material.chapter');
+    Route::get('/material/chapter/{chapterId}', [SoalController::class, 'viewChapter'])->name('student.material.chapter');
+    Route::get('/material/chapter/{chapterId}/exercise/{id}', [SoalController::class, 'viewExercise'])->name('student.material.exercise');
 });
 
 require __DIR__ . '/auth.php';

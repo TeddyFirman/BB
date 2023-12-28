@@ -34,7 +34,7 @@ class AddQNAController extends Controller
                     }
                 }
 
-                return response()->json(['success' => true, 'msg' => 'Data pertanyaan:', 'data' => $data]);
+                return response()->json(['success' => true, 'msg' => 'Data Pertanyaan:', 'data' => $data]);
             } else {
                 return response()->json(['success' => false, 'msg' => 'Pertanyaan Belum Ditambahkan']);
             }
