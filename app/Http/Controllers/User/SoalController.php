@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Models\Subject;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Answer;
-use App\Models\Bab;
-use App\Models\BabAnswer;
 use App\Models\BabAttempt;
+use App\Models\BabAnswer;
+use App\Models\Subject;
+use App\Models\Answer;
 use App\Models\QnABab;
+use App\Models\Bab;
+use Inertia\Inertia;
 
 class SoalController extends Controller
 {
+    public function view()
+    {
+        return Inertia::render('Student/Index');
+    }
+
+    public function viewChapter()
+    {
+        return Inertia::render('Student/Chapter/Index');
+    }
+
     public function indexSubject()
     {
         $materis = Subject::all();
@@ -80,7 +90,7 @@ class SoalController extends Controller
                 return response()->json(['success' => false, 'message' => '404 Not Found QNA']);
             }
         } else {
-            return response()->json(['success' => false,'message' => '404 Not Found']);
+            return response()->json(['success' => false, 'message' => '404 Not Found']);
         }
     }
 }

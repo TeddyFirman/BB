@@ -41,7 +41,6 @@ class QnAController extends Controller
                 'answer' => $request->answer,
                 'is_correct' => $request->is_correct
             ]);
-            // }
 
             return response()->json(['success' => true, 'msg' => 'QnA Berhasil Ditambahkan']);
         } catch (\Exception $e) {

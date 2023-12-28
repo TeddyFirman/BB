@@ -9,6 +9,7 @@ use App\Http\Controllers\User\JawabanController;
 use App\Http\Controllers\User\SoalController;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -32,29 +33,29 @@ Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logou
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Route::group(['middleware' => ['role:admin']],function () {
 
-    // materi
+    // Materi (Subject)
     Route::get('admin/materi', [MateriController::class, 'index'])->name('admin.materi');
     Route::post('admin/materi', [MateriController::class, 'store']);
     Route::put('admin/materi/{id}', [MateriController::class, 'update']);
     Route::delete('admin/materi/{id}', [MateriController::class, 'destroy']);
 
-    // bab
+    // Bab (Chapter)
     Route::get('admin/bab', [BabController::class, 'index']);
     Route::post('admin/bab', [BabController::class, 'store']);
     Route::put('admin/bab/{id}', [BabController::class, 'update']);
     Route::delete('admin/bab/{id}', [BabController::class, 'destroy']);
 
-    // q&a
+    // Question-Answer
     Route::get('admin/qna', [QnAController::class, 'index']);
     Route::post('admin/qna', [QnAController::class, 'store']);
     Route::get('admin/qna-details/{id}', [QnAController::class, 'indexDetail']);
     Route::put('admin/qna/{id}', [QnAController::class, 'update']);
     Route::delete('admin/qna/{id}', [QnAController::class, 'destroy']);
 
-    // "Quizs"
+    // Quiz
     Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']);
     Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']);
-    Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexx']);
+    Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexQnA']);
     Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']);
 });
 

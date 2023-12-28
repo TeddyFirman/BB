@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AddQNAController;
 use App\Http\Controllers\Admin\MateriController;
 use App\Http\Controllers\Admin\BabController;
 use App\Http\Controllers\Admin\QnAController;
+use App\Http\Controllers\User\SoalController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -24,14 +25,8 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 })->name('/');
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -44,6 +39,11 @@ Route::prefix('/admin')->middleware(['auth:sanctum'])->group(function () {
     Route::get('/material',  [MateriController::class, 'view'])->name('admin.material');
     Route::get('/chapter',  [BabController::class, 'view'])->name('admin.chapter');
     Route::get('/question-answer',  [QnAController::class, 'view'])->name('admin.question.answer');
+    Route::get('/quiz',  [AddQNAController::class, 'view'])->name('admin.quiz');
+});
+Route::prefix('/student')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/material', [SoalController::class, 'view'])->name('student.material');
+    Route::get('/material/chapter/{id}', [SoalController::class, 'viewChapter'])->name('student.material.chapter');
 });
 
 require __DIR__ . '/auth.php';

@@ -1,3 +1,4 @@
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
 import axios from 'axios';
 
@@ -16,13 +17,16 @@ export default function Sidebar() {
   const currentRoute = window.location.pathname;
   return (
     <>
-      <div className="flex w-56 flex-col bg-gray-800">
-        <Link
-          href="dashboard"
-          className="flex flex-row items-center justify-center font-body text-white"
-        >
-          <span className="py-2.5 text-xl font-bold">Admin Panel</span>
-        </Link>
+      <div className="flex w-60 flex-col bg-gray-800">
+        <div className="flex flex-row items-center space-x-2 px-2 py-2.5">
+          <ApplicationLogo className="h-12 w-12 fill-current text-red-600" />
+          <Link
+            href="dashboard"
+            className="flex flex-row items-center justify-center font-body text-white"
+          >
+            <span className="py-2.5 text-xl font-bold">Admin Panel</span>
+          </Link>
+        </div>
         <hr className="mx-2 border-gray-600" />
         <ul className="flex h-full flex-col space-y-3.5 p-2 font-body">
           <li className="flex flex-row items-center space-x-2 text-white">
@@ -132,7 +136,33 @@ export default function Sidebar() {
               }`}
               aria-current="page"
             >
-              Question
+              Pertanyaan
+            </Link>
+          </li>
+          <li className="flex flex-row items-center space-x-2 text-white">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="h-5 w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.429 9.75 2.25 12l4.179 2.25m0-4.5 5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L21.75 12l-4.179 2.25m0 0 4.179 2.25L12 21.75 2.25 16.5l4.179-2.25m11.142 0-5.571 3-5.571-3"
+              />
+            </svg>
+
+            <Link
+              href={route('admin.quiz')}
+              className={`text-white hover:text-red-400 ${
+                currentRoute === '/admin/quiz' ? 'font-bold text-red-400' : ''
+              }`}
+              aria-current="page"
+            >
+              Quiz
             </Link>
           </li>
         </ul>

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,6 +30,7 @@ class AuthController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
+        $user->assignRole('user');
 
         $success['token'] = $user->createToken('auth_token')->plainTextToken;
         $success['name'] = $user->name;
@@ -47,17 +48,16 @@ class AuthController extends Controller
             $auth = Auth::user();
             $success['token'] = $auth->createToken('auth_token')->plainTextToken;
             $success['name'] = $auth->name;
-            // $success['role'] = $auth->role_id;
 
             if ($auth->hasRole('admin')) {
                 $success['role'] = 'admin';
-                $message = 'Login Berhasil sebagai admin';
+                $message = 'Login Berhasil Sebagai Admin';
             } elseif ($auth->hasRole('user')) {
                 $success['role'] = 'user';
-                $message = 'Login Berhasil sebagai pengguna biasa';
+                $message = 'Login Berhasil Sebagai Student';
             } else {
-                $success['role'] = 'Anda siapa?';
-                $message = 'Anda tidak memiliki peran yang valid';
+                $success['role'] = 'Anda Siapa?';
+                $message = 'Anda Tidak Memiliki Peran Yang Valid';
             }
 
             return response()->json(['success' => true, 'message' => $message, 'data' => $success]);

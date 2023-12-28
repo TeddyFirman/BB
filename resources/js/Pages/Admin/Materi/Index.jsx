@@ -1,6 +1,6 @@
 import axios from 'axios';
 import Layout from '@/Pages/Layout/Layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import AddSubject from '@/Components/Modal/AddSubject';
 import EditSubject from '@/Components/Modal/EditSubject';

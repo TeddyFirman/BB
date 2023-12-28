@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useEffect } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
@@ -5,10 +6,10 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import ApplicationLogo from '@/Components/ApplicationLogo';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 
 export default function Register() {
-  const { data, setData, post, processing, errors, reset } = useForm({
+  const { data, setData, processing, errors, reset } = useForm({
     name: '',
     email: '',
     password: '',
@@ -21,10 +22,23 @@ export default function Register() {
     };
   }, []);
 
+  const name = data.name;
+  const email = data.email;
+  const password = data.password;
+  const confirm_password = data.password_confirmation;
+
   const submit = (e) => {
     e.preventDefault();
 
-    post(route('register'));
+    axios
+      .post('/api/register', { name, email, password, confirm_password })
+      .then((response) => {
+        console.log(response);
+        router.visit(route('login'));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -35,7 +49,7 @@ export default function Register() {
         <Link href={route('/')}>
           <ApplicationLogo className="mx-auto w-16 fill-current text-gray-400 transition duration-300 hover:text-red-600" />
         </Link>
-        <form onSubmit={submit} className="space-y-2.5">
+        <form onSubmit={submit} method="POST" className="space-y-2.5">
           <div className="space-y-1.5">
             <InputLabel htmlFor="name" value="Name" />
 

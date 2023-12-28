@@ -3,13 +3,13 @@ import { router } from '@inertiajs/react';
 import { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-export default function DeleteQuestion({ isOpen, setIsOpen, item }) {
+export default function DeleteQuiz({ isOpen, setIsOpen, items }) {
   const deleteSubject = async () => {
     await axios
-      .delete(`/api/admin/qna/${item.id}`)
+      .delete(`/api/admin/qna/${items.id}`)
       .then(() => {
         setIsOpen(false);
-        router.visit(route('admin.question.answer'));
+        router.visit(route('admin.quiz'));
       })
       .catch((error) => {
         console.log('Gagal Menghapus Materi', error);
@@ -47,11 +47,11 @@ export default function DeleteQuestion({ isOpen, setIsOpen, item }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Hapus Materi
+                    Hapus Pertanyaan
                   </Dialog.Title>
                   <div className="h-full py-2.5 font-body text-gray-600">
-                    {`Anda Akan Menghapus Materi `}
-                    <span className="font-bold text-red-600">{`${item.question}`}</span>
+                    {`Anda Akan Menghapus Pertanyaan `}
+                    <span className="font-bold text-red-600">{`${items?.questions}`}</span>
                     {` ?`}
                   </div>
 

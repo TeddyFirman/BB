@@ -2,46 +2,74 @@ import axios from 'axios';
 import Layout from '@/Pages/Layout/Layout';
 import { Head, Link } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
-import AddQuestion from '@/Components/Modal/AddQuestion';
-import EditQuestion from '@/Components/Modal/EditQuestion';
-import DeleteQuestion from '@/Components/Modal/DeleteQuestion';
+import AddQuiz from '@/Components/Modal/AddQuiz';
+import EditQuiz from '@/Components/Modal/EditQuiz';
+import DeleteQuiz from '@/Components/Modal/DeleteQuiz';
 
 export default function Index() {
+  const [quiz, setQuiz] = useState([]);
+  const [chapter, setChapter] = useState([]);
+  const [question, setQuestion] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [questionId, setQuestionId] = useState([]);
+
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [questions, setQuestions] = useState([]);
-  const [question, setQuestion] = useState([]);
 
   useEffect(() => {
+    const getQuiz = async () => {
+      try {
+        const response = await axios.get('/api/admin/get-question-quiz');
+        setQuiz(response.data.data);
+      } catch (error) {
+        console.error('Error Fetching Quiz:', error);
+      }
+    };
+    getQuiz();
     const getQuestion = async () => {
       try {
         const response = await axios.get('/api/admin/qna');
         setQuestions(response.data.data);
       } catch (error) {
-        console.error('Error Fetching Material:', error);
+        console.error('Error Fetching Question:', error);
       }
     };
-
     getQuestion();
+    const getChapter = async () => {
+      try {
+        const response = await axios.get('/api/admin/bab');
+        setChapter(response.data.data);
+      } catch (error) {
+        console.error('Error Fetching Chapter:', error);
+      }
+    };
+    getChapter();
   }, []);
   return (
     <Layout>
       <Head title="Materi" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
-        <AddQuestion isOpen={openAdd} setIsOpen={setOpenAdd} />
-        <EditQuestion
-          isOpen={openEdit}
-          setIsOpen={setOpenEdit}
-          items={question}
+        <AddQuiz
+          isOpen={openAdd}
+          chapters={chapter}
+          questions={questions}
+          setIsOpen={setOpenAdd}
         />
-        <DeleteQuestion
+        {/* <EditQuiz
+          isOpen={openEdit}
+          chapters={chapter}
+          questions={questions}
+          questionId={questionId}
+          setIsOpen={setOpenEdit}
+        /> */}
+        <DeleteQuiz
           isOpen={openDelete}
           setIsOpen={setOpenDelete}
-          item={question}
+          items={question}
         />
         <h3 className="font-head text-xl font-semibold text-gray-800">
-          Halaman Pertanyaan
+          Halaman Quiz
         </h3>
         <button
           onClick={() => setOpenAdd(true)}
@@ -61,7 +89,7 @@ export default function Index() {
               d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          Question
+          Quiz
         </button>
       </div>
       <div className="my-2">
@@ -70,27 +98,29 @@ export default function Index() {
             <thead>
               <tr className="font-head bg-gray-100 text-gray-800">
                 <th className="px-4 py-2">No</th>
-                <th className="px-4 py-2">Pertanyaan</th>
-                <th className="px-4 py-2">Jawaban</th>
+                <th className="px-4 py-2">Pertanyaan Quiz</th>
                 <th className="px-4 py-2">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {Object.values(questions).map((item, index) => (
-                <tr key={index} className="text-center font-body text-gray-600">
+              {quiz.map((item, index) => (
+                <tr
+                  key={item?.id}
+                  className="text-center font-body text-gray-600"
+                >
                   <td>{index + 1}</td>
-                  <td>{item.question}</td>
-                  <td>{item.answers[0].answer}</td>
+                  <td>{item?.questions}</td>
                   <td className="flex flex-row justify-center space-x-4 py-2">
-                    <button
+                    {/* <button
                       onClick={() => {
                         setOpenEdit(true);
                         setQuestion(item);
+                        setQuestionId(item.id);
                       }}
-                      className="rounded bg-green-400 px-2.5 py-2 text-white hover:bg-green-600"
+                      className="rounded bg-blue-400 px-2.5 py-2 text-white hover:bg-blue-600"
                     >
-                      Edit
-                    </button>
+                      Detail
+                    </button> */}
                     <button
                       onClick={() => {
                         setOpenDelete(true);

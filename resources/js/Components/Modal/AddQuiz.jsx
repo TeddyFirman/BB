@@ -1,39 +1,28 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Markdown from 'react-markdown';
 import { router } from '@inertiajs/react';
-import rehypePrism from 'rehype-prism-plus';
-import { Fragment, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Fragment } from 'react';
+import { useForm } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
 
-export default function AddChapter({ isOpen, setIsOpen, items }) {
+export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
   const {
-    watch,
-    control,
     register,
     handleSubmit,
-    formState: { errors, isValid, isLoading },
+    formState: { errors, isValid },
   } = useForm();
 
   const alertWithSwal = withReactContent(Swal);
 
-  const [contents, setContents] = useState('');
-
-  setTimeout(() => {
-    const input = watch('pertanyaan');
-    setContents(input);
-  }, 5000);
-
-  async function addChapter(data) {
+  async function addQuiz(data) {
     await axios
-      .post('/api/admin/bab', data, {
+      .post('/api/admin/add-question-quiz', data, {
         headers: {
           'Content-Type': 'application/json',
         },
       })
-      .then(() => {
+      .then((response) => {
         alertWithSwal.fire({
           timer: 3000,
           timerProgressBar: true,
@@ -46,14 +35,12 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
           ),
           html: (
             <div className="text-center font-medium text-green-400">
-              Bab
-              {` ${data.judul} `}
-              Berhasil Ditambahkan
+              Quiz Berhasil Ditambahkan
             </div>
           ),
         });
         setIsOpen(false);
-        router.visit(route('admin.chapter'));
+        router.visit(route('admin.quiz'));
       })
       .catch((error) => {
         console.log(error);
@@ -69,9 +56,7 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
           ),
           html: (
             <div className="text-center font-medium text-red-400">
-              Bab
-              {` ${data.judul} `}
-              Gagal Ditambahkan
+              Quiz Gagal Ditambahkan
             </div>
           ),
         });
@@ -104,107 +89,74 @@ export default function AddChapter({ isOpen, setIsOpen, items }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-max w-[80%] transform flex-col justify-between overflow-hidden rounded bg-white p-4 text-left align-middle shadow-lg transition-all">
+                <Dialog.Panel className="flex h-max w-[70%] transform flex-col justify-between overflow-hidden rounded bg-white p-4 text-left align-middle shadow-lg transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
-                    Tambah Bab
+                    Tambah Quiz
                   </Dialog.Title>
                   <div className="h-full">
                     <form
-                      onSubmit={handleSubmit(addChapter)}
+                      onSubmit={handleSubmit(addQuiz)}
                       method="POST"
-                      className="h-full"
+                      className="h-full space-y-2.5"
                     >
                       <div className="w-full">
-                        <div className="flex w-full flex-row space-x-2">
-                          <div className="flex w-1/2 flex-col">
-                            <label className="block py-2">Bagian Materi</label>
+                        <div className="flex w-full flex-col space-y-2">
+                          <div className="flex w-full flex-col">
+                            <label className="block py-2">Pilih Bab</label>
                             <select
+                              name="chapter"
                               className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
-                              name="subject"
-                              {...register('subject_id', {
+                              {...register('bab_id', {
                                 required: true,
                               })}
                             >
-                              {items.map((item) => (
+                              {Object.values(chapters).map((item, index) => (
                                 <option
+                                  key={index}
                                   className="h-max"
-                                  key={item.id}
-                                  value={item.id}
+                                  value={item?.id}
                                 >
-                                  {item.subject || isLoading}
+                                  {item?.judul} - {item?.subject?.subject}
                                 </option>
                               ))}
                             </select>
-                            {errors.subject &&
-                              errors.subject.type === 'required' && (
+                            {errors.chapter &&
+                              errors.chapter.type === 'required' && (
                                 <p className="font-head text-sm text-red-400">
                                   Pilih Bagian Materi...
                                 </p>
                               )}
                           </div>
-                          <div className="flex w-1/2 flex-col">
-                            <label className="block py-2">Judul Bab</label>
-                            <input
-                              type="text"
-                              name="chapter"
-                              className="w-full rounded-sm border-gray-200 p-1 font-body text-gray-600 focus:border-blue-200"
-                              {...register('judul', {
-                                required: true,
-                              })}
-                            />
-                            {errors.chapter &&
-                              errors.chapter.type === 'required' && (
-                                <p className="font-head text-sm text-red-400">
-                                  Masukkan Judul Bab...
-                                </p>
-                              )}
-                          </div>
-                        </div>
-                        <div className="flex w-full flex-row space-x-2">
-                          <div className="w-1/2">
-                            <label className="block py-2">Pertanyaan</label>
-                            <Controller
-                              name="question"
-                              control={control}
-                              render={({ ...field }) => (
-                                <>
-                                  <textarea
-                                    {...field}
-                                    type="text"
-                                    name="question"
-                                    className="h-48 w-full resize-none rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
-                                    {...register('pertanyaan', {
+                          <div className="flex flex-row space-x-2.5">
+                            <div className="flex w-full flex-col">
+                              {Object.values(questions).map((item, index) => (
+                                <div className="flex flex-row items-center space-x-2 py-2">
+                                  <input
+                                    key={item.id}
+                                    value={item.id}
+                                    type="checkbox"
+                                    name={`question`}
+                                    className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
+                                    {...register(`question_id`, {
                                       required: true,
                                     })}
                                   />
-                                  {errors.question &&
-                                    errors.question.type === 'required' && (
-                                      <p className="font-head text-sm text-red-400">
-                                        Masukkan Pertanyaan...
-                                      </p>
-                                    )}
-                                </>
-                              )}
-                            />
-                          </div>
-                          <div className="w-1/2">
-                            <label className="block py-2">Pratinjau</label>
-                            <Markdown
-                              rehypePlugins={rehypePrism}
-                              className="h-48 w-full rounded-sm border border-gray-200 p-1 font-body text-gray-600"
-                            >
-                              {contents}
-                            </Markdown>
+                                  <label className="font-body text-gray-600">
+                                    {item.question}
+                                  </label>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       </div>
                       <div className="space-x-2 font-body">
                         <button
                           type="submit"
-                          disabled={!isValid}
+                          disable={!isValid}
                           className="justify-center rounded border border-transparent bg-blue-400 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-400"
                         >
                           Simpan

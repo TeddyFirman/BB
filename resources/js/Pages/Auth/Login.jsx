@@ -32,7 +32,7 @@ export default function Login({ status }) {
         if (response.data.data.role == 'admin') {
           router.visit(route('admin.dashboard'));
         } else {
-          router.visit(route('dashboard'));
+          router.visit(route('student.material'));
         }
       })
       .catch((error) => {

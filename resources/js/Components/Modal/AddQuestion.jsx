@@ -1,24 +1,71 @@
 import axios from 'axios';
-import { Fragment, useState } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import Swal from 'sweetalert2';
+import { Fragment } from 'react';
+import { useForm } from 'react-hook-form';
 import { router } from '@inertiajs/react';
+import { Dialog, Transition } from '@headlessui/react';
+import withReactContent from 'sweetalert2-react-content';
 
 export default function AddQuestion({ isOpen, setIsOpen }) {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState('');
-  const [is_correct, setIsCorrect] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm();
 
-  const addQuestion = async () => {
+  const alertWithSwal = withReactContent(Swal);
+
+  async function addQuestion(data) {
     await axios
-      .post('/api/admin/qna', { question, answer, is_correct })
+      .post('/api/admin/qna', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
       .then((response) => {
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-green-600">
+              Perintah Berhasil
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-green-400">
+              Pertanyaan
+              {` ${data.question} `}
+              Berhasil Ditambahkan
+            </div>
+          ),
+        });
         setIsOpen(false);
         router.visit(route('admin.question.answer'));
       })
       .catch((error) => {
-        console.log('Gagal Menambahkan Materi', error);
+        console.log(error);
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-red-600">
+              Perintah Gagal
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-red-400">
+              Pertanyaan
+              {` ${data.question} `}
+              Gagal Ditambahkan
+            </div>
+          ),
+        });
       });
-  };
+  }
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -46,45 +93,29 @@ export default function AddQuestion({ isOpen, setIsOpen }) {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="flex h-max w-[85%] transform flex-col justify-between overflow-hidden rounded bg-white p-4 text-left align-middle shadow-lg transition-all">
+                <Dialog.Panel className="flex h-max w-[70%] transform flex-col justify-between overflow-hidden rounded bg-white p-4 text-left align-middle shadow-lg transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-800"
                   >
                     Tambah Pertanyaan
                   </Dialog.Title>
-                  <div className="h-full py-2.5">
-                    <form method="POST" className="h-full">
+                  <div className="h-full">
+                    <form
+                      onSubmit={handleSubmit(addQuestion)}
+                      method="POST"
+                      className="h-full space-y-2.5"
+                    >
                       <div className="w-full">
-                        <div className="flex w-full flex-row space-x-2">
-                          <div className="flex w-full flex-col">
-                            <label className="block py-2">Pertanyaan</label>
-                            <input
-                              type="text"
-                              name="question"
-                              value={question}
-                              onChange={(e) => setQuestion(e.target.value)}
-                              className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
-                            />
-                          </div>
-                          <div className="flex w-full flex-col">
-                            <label className="block py-2">Jawaban</label>
-                            <input
-                              type="text"
-                              name="answer"
-                              value={answer}
-                              onChange={(e) => setAnswer(e.target.value)}
-                              className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
-                            />
-                          </div>
+                        <div className="flex w-full flex-col space-y-2">
                           <div className="flex w-full flex-col">
                             <label className="block py-2">Status</label>
                             <select
-                              type="text"
-                              name="question"
-                              value={is_correct}
-                              onChange={(e) => setIsCorrect(e.target.value)}
-                              className={`w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200`}
+                              name="is_correct"
+                              className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                              {...register('is_correct', {
+                                required: true,
+                              })}
                             >
                               <option className="h-max" key={0} value={0}>
                                 Salah
@@ -94,25 +125,61 @@ export default function AddQuestion({ isOpen, setIsOpen }) {
                               </option>
                             </select>
                           </div>
+                          <div className="flex flex-row space-x-2.5">
+                            <div className="flex w-full flex-col">
+                              <label className="block py-2">Pertanyaan</label>
+                              <input
+                                type="text"
+                                name="question"
+                                className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                {...register('question', {
+                                  required: true,
+                                })}
+                              />
+                              {errors.question &&
+                                errors.question.type === 'required' && (
+                                  <p className="font-head text-sm text-red-400">
+                                    Masukkan Pertanyaan...
+                                  </p>
+                                )}
+                            </div>
+                            <div className="flex w-full flex-col">
+                              <label className="block py-2">Jawaban</label>
+                              <input
+                                type="text"
+                                name="answer"
+                                className="w-full rounded-sm border-gray-200 px-2.5 py-1 font-body text-gray-600 focus:border-blue-200"
+                                {...register('answer', {
+                                  required: true,
+                                })}
+                              />
+                              {errors.question &&
+                                errors.question.type === 'required' && (
+                                  <p className="font-head text-sm text-red-400">
+                                    Masukkan Jawaban...
+                                  </p>
+                                )}
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      <div className="space-x-2 font-body">
+                        <button
+                          type="submit"
+                          disabled={!isValid}
+                          className="justify-center rounded border border-transparent bg-blue-400 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-400"
+                        >
+                          Simpan
+                        </button>
+                        <button
+                          type="button"
+                          className="justify-center rounded border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-gray-600 focus:outline-none"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Tutup
+                        </button>
+                      </div>
                     </form>
-                  </div>
-
-                  <div className="space-x-2 font-body">
-                    <button
-                      className="justify-center rounded border border-transparent bg-blue-400 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none"
-                      onClick={addQuestion}
-                    >
-                      Simpan
-                    </button>
-                    <button
-                      type="button"
-                      className="justify-center rounded border border-transparent bg-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-red-200 focus:outline-none"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Tutup
-                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
