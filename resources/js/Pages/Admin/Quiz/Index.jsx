@@ -32,18 +32,13 @@ export default function Index() {
     fetcher,
   );
 
-  const quizsLength = quizs.data.length;
   let quizItem = quizs?.data;
+  const quizsLength = quizItem?.length;
   return (
     <Layout>
       <Head title="Kuis" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
-        <AddQuiz
-          isOpen={openAdd}
-          chapters={chapters}
-          questions={questions}
-          setIsOpen={setOpenAdd}
-        />
+        <AddQuiz isOpen={openAdd} setIsOpen={setOpenAdd} chapters={chapters} />
         {/* <EditQuiz
           isOpen={openEdit}
           chapters={chapter}
@@ -56,9 +51,7 @@ export default function Index() {
           setIsOpen={setOpenDelete}
           items={question}
         />
-        <h3 className="font-head text-xl font-semibold text-gray-800">
-          Halaman Quiz
-        </h3>
+        <h3 className="font-head text-xl font-semibold text-gray-800">Kuis</h3>
         <button
           onClick={() => setOpenAdd(true)}
           className="font-head flex flex-row items-center rounded bg-blue-400 py-1.5 pl-1.5 pr-2.5 text-white transition duration-300 hover:bg-blue-600"

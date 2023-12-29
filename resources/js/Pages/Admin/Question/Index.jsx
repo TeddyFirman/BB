@@ -1,12 +1,12 @@
+import useSWR from 'swr';
 import axios from 'axios';
+import Loading from '@/Components/Loading';
 import Layout from '@/Pages/Layout/Layout';
 import { Head, Link } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import AddQuestion from '@/Components/Modal/AddQuestion';
 import EditQuestion from '@/Components/Modal/EditQuestion';
 import DeleteQuestion from '@/Components/Modal/DeleteQuestion';
-import useSWR from 'swr';
-import Loading from '@/Components/Loading';
 
 export default function Index() {
   const [openAdd, setOpenAdd] = useState(false);
@@ -87,7 +87,6 @@ export default function Index() {
                         key={index}
                         className="text-center font-body text-gray-600"
                       >
-                        {console.log(item)}
                         <td>{index + 1}</td>
                         <td>{item?.question}</td>
                         <td>{item.answers[0].answer}</td>

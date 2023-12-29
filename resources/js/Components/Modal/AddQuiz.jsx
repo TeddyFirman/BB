@@ -1,3 +1,4 @@
+import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { router } from '@inertiajs/react';
@@ -5,8 +6,9 @@ import { Fragment } from 'react';
 import { useForm } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
+import Loading from '../Loading';
 
-export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
+export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
   const {
     register,
     handleSubmit,
@@ -14,6 +16,23 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
   } = useForm();
 
   const alertWithSwal = withReactContent(Swal);
+
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
+
+  // const { data: chapters, isLoading: loadingChapter } = useSWR(
+  //   `/api/admin/chapter`,
+  //   fetcher,
+  // );
+
+  const { data: questions, isLoading: loadingQuestion } = useSWR(
+    `/api/admin/qna`,
+    fetcher,
+  );
+
+  const chaptersItem = chapters?.data;
+  const questionItem = questions?.data;
+
+  console.log(chaptersItem);
 
   async function addQuiz(data) {
     await axios
@@ -63,8 +82,7 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
         });
       });
   }
-  const questionItem = questions?.data;
-  const chapterItem = chapters?.data;
+
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -118,44 +136,54 @@ export default function AddQuiz({ isOpen, setIsOpen, questions, chapters }) {
                                 required: true,
                               })}
                             >
-                              {Object.values(chapterItem).map((item, index) => (
-                                <option
-                                  key={index}
-                                  className="h-max"
-                                  value={item?.id}
-                                >
-                                  {item?.judul}
-                                </option>
-                              ))}
+                              {chapters == undefined ? (
+                                <Loading />
+                              ) : (
+                                Object.values(chaptersItem).map(
+                                  (item, index) => (
+                                    <option
+                                      key={index}
+                                      className="h-max"
+                                      value={item?.id}
+                                    >
+                                      {item?.judul}
+                                    </option>
+                                  ),
+                                )
+                              )}
                             </select>
                             {errors.chapter &&
                               errors.chapter.type === 'required' && (
                                 <p className="font-head text-sm text-red-400">
-                                  Pilih Bagian Materi...
+                                  Pilih Sub-Materi...
                                 </p>
                               )}
                           </div>
                           <div className="flex flex-row space-x-2.5">
                             <div className="flex w-full flex-col">
                               <p>Pilih Pertanyaan Kuis: </p>
-                              {Object.values(questionItem).map(
-                                (item, index) => (
-                                  <div className="flex flex-row items-center space-x-2 py-2">
-                                    <input
-                                      key={index}
-                                      value={item?.id}
-                                      type="checkbox"
-                                      name={`question`}
-                                      className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
-                                      {...register(`question_id`, {
-                                        required: true,
-                                      })}
-                                    />
-                                    <label className="font-body text-gray-600">
-                                      {item?.question}
-                                    </label>
-                                  </div>
-                                ),
+                              {loadingQuestion ? (
+                                <p>Sedang Memuat...</p>
+                              ) : (
+                                Object.values(questionItem).map(
+                                  (item, index) => (
+                                    <div className="flex flex-row items-center space-x-2 py-2">
+                                      <input
+                                        key={index}
+                                        value={item?.id}
+                                        type="checkbox"
+                                        name={`question`}
+                                        className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
+                                        {...register(`question_id`, {
+                                          required: true,
+                                        })}
+                                      />
+                                      <label className="font-body text-gray-600">
+                                        {item?.question}
+                                      </label>
+                                    </div>
+                                  ),
+                                )
                               )}
                             </div>
                           </div>
