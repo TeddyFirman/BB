@@ -34,7 +34,7 @@ class BabController extends Controller
         $bab = $materi->babs()->create([
             'subject_id' => $validatedData['subject_id'],
             'judul' => $validatedData['judul'],
-            'pertanyaan' => $validatedData['pertanyaan'],
+            // 'pertanyaan' => $validatedData['pertanyaan'],
             'form_id' => $unique
         ]);
 

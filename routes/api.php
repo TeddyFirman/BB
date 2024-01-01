@@ -53,10 +53,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::delete('admin/qna/{id}', [QnAController::class, 'destroy']);
 
     // Quiz
-    Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']);
-    Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']);
-    Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexQnA']);
-    Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']);
+    // Route::get('admin/quiz-dashboard', [AddQNAController::class, 'quizDashboard']);
+    Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']); // * Isi Pertanyaan (Modals)
+    Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']); // Todo nambah pertanyaan
+    Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexQnA']); // * Lihat pertanyaan (Modals)
+    Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']); // ! Edit / Hapus Quiz
 });
 
 

@@ -15,7 +15,6 @@ class Bab extends Model
     protected $fillable = [
         'subject_id',
         'judul',
-        'pertanyaan',
         'form_id'
     ];
 
