@@ -1,12 +1,12 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { router } from '@inertiajs/react';
+import Loading from '../Loading';
 import { Fragment } from 'react';
+import { router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
-import Loading from '../Loading';
 
 export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
   const {
@@ -19,11 +19,6 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
 
   const fetcher = (url) => axios.get(url).then((response) => response.data);
 
-  // const { data: chapters, isLoading: loadingChapter } = useSWR(
-  //   `/api/admin/chapter`,
-  //   fetcher,
-  // );
-
   const { data: questions, isLoading: loadingQuestion } = useSWR(
     `/api/admin/qna`,
     fetcher,
@@ -31,8 +26,6 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
 
   const chaptersItem = chapters?.data;
   const questionItem = questions?.data;
-
-  console.log(chaptersItem);
 
   async function addQuiz(data) {
     await axios
@@ -136,7 +129,7 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
                                 required: true,
                               })}
                             >
-                              {chapters == undefined ? (
+                              {!chaptersItem ? (
                                 <Loading />
                               ) : (
                                 Object.values(chaptersItem).map(

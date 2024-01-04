@@ -29,7 +29,6 @@ class AddQNAController extends Controller
             ];
 
             return response()->json(['success' => true, 'data' => $data], 200);
-
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'msg' => $e->getMessage()]);
         }
@@ -99,7 +98,7 @@ class AddQNAController extends Controller
         try {
             QnABab::where('id', $id)->delete();
 
-            return response()->json(['success' => true, 'msg' => 'Pertanyaan dihapus']);
+            return response()->json(['success' => true, 'msg' => 'Pertanyaan Berhasil Dihapus']);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'msg' => $e->getMessage()]);
         }

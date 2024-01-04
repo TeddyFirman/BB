@@ -6,7 +6,7 @@ import { Dialog, Transition } from '@headlessui/react';
 export default function DeleteQuiz({ isOpen, setIsOpen, items }) {
   const deleteSubject = async () => {
     await axios
-      .delete(`/api/admin/qna/${items.id}`)
+      .delete(`/api/admin/delete-question-quiz/${items.id}`)
       .then(() => {
         setIsOpen(false);
         router.visit(route('admin.quiz'));
