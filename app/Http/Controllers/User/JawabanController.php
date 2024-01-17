@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Answer;
 use App\Models\BabAnswer;
 use App\Models\BabAttempt;
 use Illuminate\Http\Request;
@@ -19,6 +20,10 @@ class JawabanController extends Controller
         ]);
 
         $qcount = count($request->q);
+
+        // * Tambahan Remark
+        $isAllCorrect = true;
+
         if ($qcount > 0) {
             for ($i = 0; $i < $qcount; $i++) {
 
@@ -29,9 +34,26 @@ class JawabanController extends Controller
                     'question_id' => $request->q[$i],
                     'typed_answer' => $typedAnswer
                 ]);
+
+                //? Check typed_answer dan answer
+                $isCorrect = $this->checkAnswer($request->q[$i], $typedAnswer);
+
+                if (!$isCorrect) {
+                    $isAllCorrect = false;
+                }
             }
         }
 
+        $status = $isAllCorrect ? 2 : 1;
+        BabAttempt::where('id', $attempt_id)->update(['status' => $status]);
+
         return response()->json(['success' => true, 'message' => 'Terima Kasih Telah mengerjakan']);
+    }
+
+    private function checkAnswer($questionId, $typedAnswer)
+    {
+        $correctAnswer = Answer::where('question_id', $questionId)->first()->answer;
+
+        return $typedAnswer === $correctAnswer;
     }
 }

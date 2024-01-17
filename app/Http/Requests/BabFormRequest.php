@@ -33,7 +33,8 @@ class BabFormRequest extends FormRequest
             // 'pertanyaan' => [
             //     'required'
             // ],
-            'form_id' => ['required|unique:babs']
+            'form_id' => ['required|unique:babs'],
+            'code_question' => ['required']
         ];
     }
 }

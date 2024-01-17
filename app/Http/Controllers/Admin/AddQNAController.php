@@ -68,15 +68,20 @@ class AddQNAController extends Controller
     public function store(Request $request)
     {
         try {
-            if (isset($request->question_id)) {
-                foreach ($request->question_id as $qid) {
+
+            if(isset($request->questions_ids)) {
+
+                foreach($request->questions_ids as $qid) {
                     QnABab::insert([
                         'bab_id' => $request->bab_id,
-                        'question_id' => $qid,
+                        'question_id' => $qid
                     ]);
                 }
+
             }
-            return response()->json(['success' => true, 'msg' => 'Pertanyaan Berhasil Ditambahkan']);
+
+            return response()->json(['success' => true, 'msg' => 'Soal&Jawaban berhasil ditambahkan!']);
+
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'msg' => $e->getMessage()]);
         }

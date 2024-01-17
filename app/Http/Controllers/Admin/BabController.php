@@ -35,7 +35,8 @@ class BabController extends Controller
             'subject_id' => $validatedData['subject_id'],
             'judul' => $validatedData['judul'],
             // 'pertanyaan' => $validatedData['pertanyaan'],
-            'form_id' => $unique
+            'form_id' => $unique,
+            'code_question' => $validatedData['code_question']
         ]);
 
         return response()->json(['message' => 'Data berhasil ditambahkan'], 201);
@@ -49,7 +50,7 @@ class BabController extends Controller
 
         $bab->subject_id = $validatedData['subject_id'];
         $bab->judul = $validatedData['judul'];
-        $bab->pertanyaan = $validatedData['pertanyaan'];
+        $bab->code_question = $validatedData['code_question'];
         $bab->save();
 
         return response()->json(['message' => 'Data berhasil diupdatte']);
