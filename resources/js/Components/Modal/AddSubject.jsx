@@ -82,7 +82,7 @@ export default function AddSubject({ isOpen, setIsOpen }) {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex h-full items-center justify-center text-center backdrop-blur-sm">
+            <div className="flex h-full items-center justify-center bg-black/50 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"

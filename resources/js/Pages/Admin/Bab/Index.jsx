@@ -1,18 +1,18 @@
+import useSWR from 'swr';
 import axios from 'axios';
-import Layout from '@/Pages/Layout/Layout';
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
+import Layout from '@/Pages/Layout/Layout';
 import AddChapter from '@/Components/Modal/AddChapter';
 import EditChapter from '@/Components/Modal/EditChapter';
 import DeleteChapter from '@/Components/Modal/DeleteChapter';
-import useSWR from 'swr';
 import Loading from '@/Components/Loading';
 
 export default function Index() {
+  const [chapter, setChapter] = useState([]);
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [chapter, setChapter] = useState([]);
 
   const fetcher = (url) => axios.get(url).then((response) => response.data);
   const { data: chapters, isLoading: chaptersLoading } = useSWR(

@@ -3,7 +3,6 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Loading from '../Loading';
 import DeleteQuiz from './DeleteQuiz';
-import { router } from '@inertiajs/react';
 import { Fragment, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
@@ -19,12 +18,8 @@ export default function EditQuiz({
   const alertWithSwal = withReactContent(Swal);
 
   const fetcher = (url) => axios.get(url).then((response) => response.data);
-  const { data, isLoading } = useSWR(
-    `/api/admin/see-question-quiz/${chapterId}`,
-    fetcher,
-  );
+  const { data } = useSWR(`/api/admin/see-question-quiz/${chapterId}`, fetcher);
   async function deleteQuiz(id) {
-    console.log(id);
     await axios
       .delete(`/api/admin/delete-question-quiz/${id}`)
       .then((response) => {
@@ -68,7 +63,6 @@ export default function EditQuiz({
       });
   }
   const quizItem = data?.data;
-  console.log(chapterTitle);
   return (
     <>
       <DeleteQuiz isOpen={openDelete} setIsOpen={setOpenDelete} />
@@ -87,7 +81,7 @@ export default function EditQuiz({
           </Transition.Child>
 
           <div className="fixed inset-0 space-y-4 overflow-y-auto">
-            <div className="flex h-full items-center justify-center text-center backdrop-blur-sm">
+            <div className="flex h-full items-center justify-center bg-black/50 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"

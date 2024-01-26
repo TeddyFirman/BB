@@ -16,7 +16,6 @@ export default function Index() {
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
 
   const fetcher = (url) => axios.get(url).then((response) => response?.data);
   const { data: quizs, isLoading: quizLoading } = useSWR(
@@ -39,7 +38,12 @@ export default function Index() {
     <Layout>
       <Head title="Kuis" />
       <div className="flex flex-row items-center justify-between rounded bg-gray-200 px-2.5 py-2">
-        <AddQuiz isOpen={openAdd} setIsOpen={setOpenAdd} chapters={chapters} />
+        <AddQuiz
+          isOpen={openAdd}
+          chapterId={chapterId}
+          setIsOpen={setOpenAdd}
+          chapterTitle={chapterTitle}
+        />
         <EditQuiz
           isOpen={openEdit}
           chapterId={chapterId}
@@ -80,6 +84,7 @@ export default function Index() {
                             setOpenAdd(true);
                             setQuestion(item);
                             setChapterId(item?.id);
+                            setChapterTitle(item?.judul);
                           }}
                           className="flex flex-row items-center space-x-1.5 rounded bg-blue-400 py-2 pl-1.5 pr-2.5 text-white hover:bg-blue-600"
                         >

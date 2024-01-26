@@ -30,35 +30,33 @@ export default function Student() {
     `/api/student/bab-materi/${chapterId}`,
     fetcher,
   );
-  const formId = chapters?.babs.find((item) => item.id == lastParts);
 
   const { data: exercises, isLoading } = useSWR(
-    `/api/student/form-soal/${formId?.form_id}`,
+    `/api/student/form-soal/${lastParts}`,
     fetcher,
   );
-  const chapter = exercises;
-  const quiz = exercises?.qna;
+  const codeQuestion = exercises?.bab[0]?.code_question;
   const status = exercises?.success;
+  const quiz = exercises?.qna;
 
   async function submit(data) {
-    alert('Terima Kasih Telah Mengerjakan');
-    // await axios
-    //   .post('/api/student/bab-submit', data, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //     router.visit(route('student.material.exercise'));
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    await axios
+      .post('/api/student/bab-submit', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        console.log(response);
+        router.visit(route('student.material.exercise'));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
   useEffect(() => {
-    setValue('bab_id', parseInt(lastParts));
-  }, [setValue, lastParts]);
+    setValue('bab_id', parseInt(chapterId));
+  }, [setValue, chapterId]);
   return (
     <LayoutStudent>
       <Head title="Bab" />
@@ -121,10 +119,7 @@ export default function Student() {
           <>
             <div className="flex flex-row items-center justify-between rounded-sm border-2 border-gray-200 bg-gray-100 p-2">
               <Markdown className="w-full" rehypePlugins={rehypePrism}>
-                {chapter &&
-                  chapter.bab &&
-                  chapter.bab[0] &&
-                  chapter.bab[0].pertanyaan}
+                {codeQuestion}
               </Markdown>
             </div>
 
@@ -143,26 +138,35 @@ export default function Student() {
                     onSubmit={handleSubmit(submit)}
                   >
                     <p className="font-bold">Pertanyaan :</p>
-                    <label className="w-max font-body font-semibold">
-                      Id Sub-Materi :&nbsp;
-                    </label>
-                    <input
-                      disabled={!null}
-                      type="number"
-                      className="w-[10%] rounded-sm border-gray-200 px-2 py-0.5 font-body text-gray-800 focus:border-blue-200"
-                      {...register(`bab_id`, {
-                        required: true,
-                      })}
-                    ></input>
+                    <div className="flex w-full flex-row">
+                      <label className="w-1/2 font-body">
+                        Kode Sub-Materi:&nbsp;
+                      </label>
+                      <input
+                        disabled={!null}
+                        type="number"
+                        className="w-1/2 rounded-sm border-gray-200 p-0.5 text-center font-body text-gray-400"
+                        {...register(`bab_id`, {
+                          required: true,
+                        })}
+                      ></input>
+                    </div>
                     {Object.values(quiz).map((item, index) => (
-                      <div className="flex w-full flex-row items-baseline space-x-4">
-                        <label className="w-max font-body">
+                      <div className="flex w-full flex-row items-center">
+                        <label className="w-1/2 font-body">
                           {index + 1}.&nbsp;{item?.question[0]?.question}
                         </label>
                         <input
                           type="text"
                           className="w-1/2 rounded-sm border-gray-200 px-2.5 py-0.5 font-body text-gray-600 focus:border-blue-200"
                           {...register(`ans_${index + 1}`, {
+                            required: true,
+                          })}
+                        />
+                        <input
+                          type="text"
+                          className="w-max rounded-sm border-gray-200 px-2.5 py-0.5 font-body text-gray-600 focus:border-blue-200"
+                          {...register(`q${index + 1}`, {
                             required: true,
                           })}
                         />

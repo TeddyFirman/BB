@@ -1,14 +1,18 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import Loading from '../Loading';
 import { Fragment } from 'react';
 import { router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
 
-export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
+export default function AddQuiz({
+  isOpen,
+  setIsOpen,
+  chapterId,
+  chapterTitle,
+}) {
   const {
     register,
     handleSubmit,
@@ -24,10 +28,10 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
     fetcher,
   );
 
-  const chaptersItem = chapters?.data;
   const questionItem = questions?.data;
 
   async function addQuiz(data) {
+    console.log(data);
     await axios
       .post('/api/admin/add-question-quiz', data, {
         headers: {
@@ -75,7 +79,6 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
         });
       });
   }
-
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -93,7 +96,7 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex h-full items-center justify-center text-center backdrop-blur-sm">
+            <div className="flex h-full items-center justify-center bg-black/50 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -129,28 +132,10 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
                                 required: true,
                               })}
                             >
-                              {!chaptersItem ? (
-                                <Loading />
-                              ) : (
-                                Object.values(chaptersItem).map(
-                                  (item, index) => (
-                                    <option
-                                      key={index}
-                                      className="h-max"
-                                      value={item?.id}
-                                    >
-                                      {item?.judul}
-                                    </option>
-                                  ),
-                                )
-                              )}
+                              <option selected value={chapterId}>
+                                {chapterTitle}
+                              </option>
                             </select>
-                            {errors.chapter &&
-                              errors.chapter.type === 'required' && (
-                                <p className="font-head text-sm text-red-400">
-                                  Pilih Sub-Materi...
-                                </p>
-                              )}
                           </div>
                           <div className="flex flex-row space-x-2.5">
                             <div className="flex w-full flex-col">
@@ -162,10 +147,9 @@ export default function AddQuiz({ isOpen, setIsOpen, chapters }) {
                                   (item, index) => (
                                     <div className="flex flex-row items-center space-x-2 py-2">
                                       <input
-                                        key={index}
-                                        value={item?.id}
+                                        key={item?.id}
                                         type="checkbox"
-                                        name={`question`}
+                                        value={parseInt(item?.id)}
                                         className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
                                         {...register(`question_id`, {
                                           required: true,

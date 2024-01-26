@@ -1,3 +1,4 @@
+import useSWR from 'swr';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Markdown from 'react-markdown';
@@ -7,7 +8,6 @@ import { Fragment, useEffect, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Dialog, Transition } from '@headlessui/react';
 import withReactContent from 'sweetalert2-react-content';
-import useSWR from 'swr';
 
 export default function EditChapter({ isOpen, setIsOpen, items }) {
   const {
@@ -24,7 +24,7 @@ export default function EditChapter({ isOpen, setIsOpen, items }) {
   const [contents, setContents] = useState('');
 
   setTimeout(() => {
-    const input = watch('pertanyaan');
+    const input = watch('code_question');
     setContents(input);
   }, 5000);
 
@@ -86,8 +86,8 @@ export default function EditChapter({ isOpen, setIsOpen, items }) {
   useEffect(() => {
     setValue('judul', items?.judul);
     setValue('subject_id', items?.subject_id);
-    setValue('pertanyaan', items?.pertanyaan);
-  }, [setValue, items?.pertanyaan]);
+    setValue('code_question', items?.code_question);
+  }, [setValue, items?.code_question, items?.judul, items?.subject_id]);
   return (
     <>
       <Transition appear show={isOpen} as={Fragment}>
@@ -105,7 +105,7 @@ export default function EditChapter({ isOpen, setIsOpen, items }) {
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex h-full items-center justify-center text-center backdrop-blur-sm">
+            <div className="flex h-full items-center justify-center bg-black/50 text-center">
               <Transition.Child
                 as={Fragment}
                 enter="ease-out duration-300"
@@ -182,7 +182,9 @@ export default function EditChapter({ isOpen, setIsOpen, items }) {
                         </div>
                         <div className="flex w-full flex-row space-x-2">
                           <div className="w-1/2">
-                            <label className="block py-2">Pertanyaan</label>
+                            <label className="block py-2">
+                              Kode Pertanyaan
+                            </label>
                             <Controller
                               name="question"
                               control={control}
@@ -193,7 +195,7 @@ export default function EditChapter({ isOpen, setIsOpen, items }) {
                                     type="text"
                                     name="question"
                                     className="h-48 w-full resize-none rounded-sm border-gray-200 p-1 font-body text-gray-600 focus:border-blue-200"
-                                    {...register('pertanyaan', {
+                                    {...register('code_question', {
                                       required: true,
                                     })}
                                   />
