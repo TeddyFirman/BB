@@ -151,7 +151,7 @@ export default function AddQuiz({
                                         type="checkbox"
                                         value={parseInt(item?.id)}
                                         className="rounded-sm border-gray-200 p-2.5 font-body text-blue-600 focus:border-blue-200"
-                                        {...register(`question_id`, {
+                                        {...register(`questions_ids`, {
                                           required: true,
                                         })}
                                       />
