@@ -89,7 +89,7 @@ export default function Index() {
                       >
                         <td>{index + 1}</td>
                         <td>{item?.question}</td>
-                        <td>{item.answers[0].answer}</td>
+                        <td>{item?.answers[0]?.answer}</td>
                         <td className="flex flex-row justify-center space-x-4 py-2">
                           <button
                             onClick={() => {

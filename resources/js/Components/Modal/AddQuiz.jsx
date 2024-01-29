@@ -16,7 +16,7 @@ export default function AddQuiz({
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm();
 
   const alertWithSwal = withReactContent(Swal);
@@ -31,7 +31,6 @@ export default function AddQuiz({
   const questionItem = questions?.data;
 
   async function addQuiz(data) {
-    console.log(data);
     await axios
       .post('/api/admin/add-question-quiz', data, {
         headers: {

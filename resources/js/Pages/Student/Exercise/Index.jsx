@@ -1,12 +1,14 @@
 import useSWR from 'swr';
 import axios from 'axios';
-import React, { useEffect } from 'react';
+import Swal from 'sweetalert2';
 import Markdown from 'react-markdown';
+import React, { useEffect } from 'react';
 import { router } from '@inertiajs/react';
 import { useForm } from 'react-hook-form';
 import rehypePrism from 'rehype-prism-plus';
 import LayoutStudent from '../../Layout/LayoutStudent';
 import { Head, usePage, Link } from '@inertiajs/react';
+import withReactContent from 'sweetalert2-react-content';
 
 export default function Student() {
   const {
@@ -15,6 +17,7 @@ export default function Student() {
     handleSubmit,
     formState: { isValid },
   } = useForm();
+
   const { props } = usePage();
 
   const params = props.ziggy.location;
@@ -24,12 +27,9 @@ export default function Student() {
   const chapterIndex = parts.indexOf('chapter');
   const chapterId = parts[chapterIndex + 1];
 
-  const fetcher = (url) => axios.get(url).then((response) => response.data);
+  const alertWithSwal = withReactContent(Swal);
 
-  const { data: chapters } = useSWR(
-    `/api/student/bab-materi/${chapterId}`,
-    fetcher,
-  );
+  const fetcher = (url) => axios.get(url).then((response) => response.data);
 
   const { data: exercises, isLoading } = useSWR(
     `/api/student/form-soal/${lastParts}`,
@@ -48,15 +48,48 @@ export default function Student() {
       })
       .then((response) => {
         console.log(response);
-        router.visit(route('student.material.exercise'));
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-green-600">
+              Perintah Berhasil
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-green-400">
+              Terima Kasih Telah Mengerjakan
+            </div>
+          ),
+        });
+        router.visit(`/student/material/chapter/${chapterId}`);
       })
       .catch((error) => {
         console.log(error);
+        alertWithSwal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          width: '50%',
+          title: (
+            <p className="text-center text-lg font-semibold text-red-600">
+              Perintah Gagal
+            </p>
+          ),
+          html: (
+            <div className="text-center font-medium text-red-400">
+              Kuis Gagal Ditambahkan
+            </div>
+          ),
+        });
       });
   }
   useEffect(() => {
     setValue('bab_id', parseInt(chapterId));
   }, [setValue, chapterId]);
+
   return (
     <LayoutStudent>
       <Head title="Bab" />
@@ -138,7 +171,8 @@ export default function Student() {
                     onSubmit={handleSubmit(submit)}
                   >
                     <p className="font-bold">Pertanyaan :</p>
-                    <div className="flex w-full flex-row">
+                    {/* Untuk Parameter Id */}
+                    <div className="hidden w-full flex-row">
                       <label className="w-1/2 font-body">
                         Kode Sub-Materi:&nbsp;
                       </label>
@@ -151,8 +185,11 @@ export default function Student() {
                         })}
                       ></input>
                     </div>
-                    {Object.values(quiz).map((item, index) => (
-                      <div className="flex w-full flex-row items-center">
+                    {[...Object.values(quiz)].reverse().map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex w-full flex-row items-center"
+                      >
                         <label className="w-1/2 font-body">
                           {index + 1}.&nbsp;{item?.question[0]?.question}
                         </label>
@@ -164,17 +201,21 @@ export default function Student() {
                           })}
                         />
                         <input
-                          type="text"
-                          className="w-max rounded-sm border-gray-200 px-2.5 py-0.5 font-body text-gray-600 focus:border-blue-200"
-                          {...register(`q${index + 1}`, {
+                          key={item?.question_id}
+                          value={item?.question_id}
+                          type="checkbox"
+                          className="hidden rounded-sm border-gray-200 p-2.5 font-body text-gray-600 focus:border-blue-200"
+                          {...register(`q[]`, {
                             required: true,
                           })}
+                          defaultChecked={true}
                         />
                       </div>
                     ))}
                     <button
+                      disabled={!isValid}
                       type="submit"
-                      className="rounded bg-blue-400 px-5 py-2.5 text-white hover:bg-blue-600"
+                      className="rounded bg-blue-400 px-5 py-2.5 text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-400"
                     >
                       Submit
                     </button>

@@ -17,6 +17,7 @@ export default function Student() {
     fetcher,
   );
   const chapters = data?.babs;
+  const remark = data?.dataRemark;
   return (
     <LayoutStudent>
       <Head title="Sub-Materi" />
@@ -90,12 +91,16 @@ export default function Student() {
                     Buka
                   </Link>
                 </div>
-                <div className="mt-1.5 w-full border-t-2 pt-1.5">
-                  <p className="font-body">Status: </p>
-                </div>
               </div>
             ))
           )}
+          {/* 
+          // Status Yang Di Tampilkan Sama Pada Komponen Dengan Key Berbeda
+          {Object.values(remark).map((remarkItem, remarkIndex) => (
+            <div className="mt-1.5 w-full border-t-2 pt-1.5">
+              <p className="font-body">Status: {console.log(remarkItem)}</p>
+            </div>
+          ))} */}
         </div>
       </div>
     </LayoutStudent>

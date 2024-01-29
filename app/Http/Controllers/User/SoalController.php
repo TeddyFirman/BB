@@ -79,7 +79,7 @@ class SoalController extends Controller
             ];
         }
 
-        return response()->json(['babs' => $babs, 'Data Remark' => $babData]);
+        return response()->json(['babs' => $babs, 'dataRemark' => $babData]);
     }
 
     public function indexForm($id)
