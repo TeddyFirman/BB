@@ -54,7 +54,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
 
     // Quiz
     Route::get('admin/get-question-quiz', [AddQNAController::class, 'index']); // * Isi Pertanyaan (Modals)
-    Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']); // Tambah Pertanyaan
+    Route::post('admin/add-question-quiz', [AddQNAController::class, 'store']); //? Tambah Pertanyaan
     Route::get('admin/see-question-quiz/{id}', [AddQNAController::class, 'indexQnA']); // * Lihat pertanyaan (Modals)
     Route::delete('admin/delete-question-quiz/{id}', [AddQNAController::class, 'destroy']); // ! Edit / Hapus Quiz
 });
