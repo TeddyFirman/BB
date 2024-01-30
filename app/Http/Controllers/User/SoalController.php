@@ -35,14 +35,58 @@ class SoalController extends Controller
         return response()->json(['data' => $materis]);
     }
 
+    // public function indexBabMateri($id)
+    // {
+    //     $subject = Subject::with('babs')->findOrFail($id);
+
+    //     $babs = $subject->babs;
+
+    //     $babIds = $babs->pluck('id')->toArray();
+
+    //     $babAttempts = BabAttempt::whereIn('bab_id', $babIds)->get();
+
+    //     $babData = [];
+
+    //     foreach ($babAttempts as $babAttempt) {
+    //         $attemptId = $babAttempt->id;
+    //         $babAnswers = BabAnswer::where('attempt_id', $attemptId)->get();
+
+    //         $processedBabAnswers = [];
+    //         $isCompleted = true;
+
+    //         foreach ($babAnswers as $babAnswer) {
+    //             $answer = Answer::where('question_id', $babAnswer->question_id)->first()->answer;
+
+    //             $babAnswer->update(['is_correct' => ($babAnswer->typed_answer === $answer)]);
+
+    //             $processedBabAnswers = [
+    //                 'attempt_id' => $babAnswer->attempt_id,
+    //                 'typed_answer' => $babAnswer->typed_answer,
+    //                 'is_correct' => $babAnswer->is_correct
+    //             ];
+
+    //             $isCompleted = $isCompleted && $babAnswer->typed_answer === $answer;
+
+    //             $processedBabAnswers[] = $processedBabAnswers;
+    //         }
+
+    //         $status = $isCompleted ? 'completed' : 'tried';
+
+    //         $babData[] = [
+    //             'attempt_id' => $attemptId,
+    //             'bab_answers' => $processedBabAnswers,
+    //             'status' => $status
+    //         ];
+    //     }
+
+    //     return response()->json(['babs' => $babs, 'dataRemark' => $babData]);
+    // }
+
     public function indexBabMateri($id)
     {
         $subject = Subject::with('babs')->findOrFail($id);
-
         $babs = $subject->babs;
-
         $babIds = $babs->pluck('id')->toArray();
-
         $babAttempts = BabAttempt::whereIn('bab_id', $babIds)->get();
 
         $babData = [];
@@ -57,25 +101,26 @@ class SoalController extends Controller
             foreach ($babAnswers as $babAnswer) {
                 $answer = Answer::where('question_id', $babAnswer->question_id)->first()->answer;
 
-                $babAnswer->update(['is_correct' => ($babAnswer->typed_answer === $answer)]);
-
-                $processedBabAnswers = [
+                $processedBabAnswers[] = [
                     'attempt_id' => $babAnswer->attempt_id,
                     'typed_answer' => $babAnswer->typed_answer,
-                    'is_correct' => $babAnswer->is_correct
+                    'is_correct' => $babAnswer->typed_answer === $answer
                 ];
 
                 $isCompleted = $isCompleted && $babAnswer->typed_answer === $answer;
-
-                $processedBabAnswers[] = $processedBabAnswers;
             }
 
             $status = $isCompleted ? 'completed' : 'tried';
 
+            // * Ambil form_id dari tabel 'babs' yang sesuai dengan 'bab_id' di 'BabAttempt'
+
+            $formId = Bab::find($babAttempt->bab_id)->form_id;
+
             $babData[] = [
                 'attempt_id' => $attemptId,
+                'form_id' => $formId,
+                'status' => $status,
                 'bab_answers' => $processedBabAnswers,
-                'status' => $status
             ];
         }
 
