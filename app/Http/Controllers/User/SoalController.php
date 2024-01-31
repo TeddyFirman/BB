@@ -110,7 +110,7 @@ class SoalController extends Controller
                 $isCompleted = $isCompleted && $babAnswer->typed_answer === $answer;
             }
 
-            $status = $isCompleted ? 'completed' : 'tried';
+            $status = $isCompleted ? 'Completed' : 'Tried';
 
             // * Ambil form_id dari tabel 'babs' yang sesuai dengan 'bab_id' di 'BabAttempt'
 

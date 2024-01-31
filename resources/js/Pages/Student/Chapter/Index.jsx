@@ -18,6 +18,7 @@ export default function Student() {
   );
   const chapters = data?.babs;
   const remark = data?.dataRemark;
+  console.log(remark);
   return (
     <LayoutStudent>
       <Head title="Sub-Materi" />
@@ -77,30 +78,64 @@ export default function Student() {
               </p>
             </div>
           ) : (
-            Object.values(chapters).map((item, index) => (
-              <div className="flex w-full flex-col items-center justify-between rounded-sm border-2 border-gray-200 bg-gray-100 p-2">
-                <div className="flex w-full flex-row items-center justify-between space-x-2.5">
-                  <p key={index} className="text-lg">
-                    {index + 1}.&nbsp;{item?.judul}
-                  </p>
-                  <Link
-                    href={`/student/material/chapter/${chapterId}/exercise/${item?.form_id}`}
-                    className="font-head rounded bg-red-400 px-5 py-2.5 text-white hover:bg-red-600"
-                    aria-current="page"
-                  >
-                    Buka
-                  </Link>
+            Object.values(chapters).map((item, index) => {
+              // Mengumpulkan semua remark yang terkait dengan form_id tertentu
+              const relevantRemarks = Object.values(remark).filter(
+                (remarkItem) => remarkItem.form_id === item.form_id,
+              );
+
+              // Mencari remark paling baru dari remark yang terkumpul
+              let latestRemark = null;
+              relevantRemarks.forEach((remarkItem) => {
+                // Pilih remark berdasarkan attempt_id
+                if (
+                  !latestRemark ||
+                  remarkItem.attempt_id > latestRemark.attempt_id
+                ) {
+                  latestRemark = remarkItem;
+                }
+              });
+
+              return (
+                <div
+                  className="flex w-full flex-col items-center justify-between rounded-sm border-2 border-gray-200 bg-gray-100 p-2"
+                  key={index}
+                >
+                  <div className="flex w-full flex-row items-center justify-between space-x-2.5">
+                    <p className="text-lg">
+                      {index + 1}.&nbsp;{item?.judul}
+                    </p>
+                    <Link
+                      href={`/student/material/chapter/${chapterId}/exercise/${item?.form_id}`}
+                      className="font-head rounded bg-red-400 px-5 py-2.5 text-white hover:bg-red-600"
+                      aria-current="page"
+                    >
+                      Buka
+                    </Link>
+                  </div>
+                  {latestRemark ? (
+                    <div className="mt-1.5 flex w-full flex-row border-t-2 pt-1.5">
+                      <p
+                        className={`w-full text-end font-semibold ${
+                          latestRemark?.status === 'Completed'
+                            ? 'text-green-500'
+                            : latestRemark?.status === 'Tried'
+                              ? 'text-yellow-500'
+                              : ''
+                        }`}
+                      >
+                        {latestRemark?.status}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-1.5 flex w-full flex-row border-t-2 pt-1.5">
+                      <p className="w-full text-end font-semibold">Not Tried</p>
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
-          {/* 
-          // Status Yang Di Tampilkan Sama Pada Komponen Dengan Key Berbeda
-          {Object.values(remark).map((remarkItem, remarkIndex) => (
-            <div className="mt-1.5 w-full border-t-2 pt-1.5">
-              <p className="font-body">Status: {console.log(remarkItem)}</p>
-            </div>
-          ))} */}
         </div>
       </div>
     </LayoutStudent>
