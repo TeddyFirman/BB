@@ -87,7 +87,7 @@ class SoalController extends Controller
         $subject = Subject::with('babs')->findOrFail($id);
         $babs = $subject->babs;
         $babIds = $babs->pluck('id')->toArray();
-        $babAttempts = BabAttempt::whereIn('bab_id', $babIds)->get();
+        $babAttempts = BabAttempt::where('user_id', Auth()->user()->id)->whereIn('bab_id', $babIds)->get();
 
         $babData = [];
 

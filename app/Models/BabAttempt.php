@@ -15,4 +15,14 @@ class BabAttempt extends Model
         'bab_id',
         'user_id',
     ];
+
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
+    public function bab()
+    {
+        return $this->hasOne(Bab::class, 'id', 'bab_id');
+    }
 }
