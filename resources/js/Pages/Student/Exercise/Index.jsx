@@ -183,35 +183,33 @@ export default function Student() {
                         })}
                       ></input>
                     </div>
-                    {[...Object.values(quiz || {})]
-                      .reverse()
-                      .map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex w-full flex-row items-center"
-                        >
-                          <label className="w-1/2 font-body">
-                            {index + 1}.&nbsp;{item?.question[0]?.question}
-                          </label>
-                          <input
-                            type="text"
-                            className="w-1/2 rounded-sm border-gray-200 px-2.5 py-0.5 font-body text-gray-600 focus:border-blue-200"
-                            {...register(`ans_${index + 1}`, {
-                              required: true,
-                            })}
-                          />
-                          <input
-                            key={item?.question_id}
-                            value={item?.question_id}
-                            type="checkbox"
-                            className="hidden rounded-sm border-gray-200 p-2.5 font-body text-gray-600 focus:border-blue-200"
-                            {...register(`q[]`, {
-                              required: true,
-                            })}
-                            defaultChecked={true}
-                          />
-                        </div>
-                      ))}
+                    {[...Object.values(quiz || {})].map((item, index) => (
+                      <div
+                        key={index}
+                        className="flex w-full flex-row items-center"
+                      >
+                        <label className="w-1/2 font-body">
+                          {index + 1}.&nbsp;{item?.question[0]?.question}
+                        </label>
+                        <input
+                          type="text"
+                          className="w-1/2 rounded-sm border-gray-200 px-2.5 py-0.5 font-body text-gray-600 focus:border-blue-200"
+                          {...register(`ans_${index + 1}`, {
+                            required: true,
+                          })}
+                        />
+                        <input
+                          key={item?.question_id}
+                          value={item?.question_id}
+                          type="checkbox"
+                          className="hidden rounded-sm border-gray-200 p-2.5 font-body text-gray-600 focus:border-blue-200"
+                          {...register(`q[]`, {
+                            required: true,
+                          })}
+                          defaultChecked={true}
+                        />
+                      </div>
+                    ))}
                     <button
                       disabled={!isValid}
                       type="submit"

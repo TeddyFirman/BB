@@ -33,7 +33,7 @@ export default function AddChapter({ isOpen, setIsOpen }) {
   setTimeout(() => {
     const input = watch('code_question');
     setContents(input);
-  }, 5000);
+  }, 7500);
 
   async function addChapter(data) {
     await axios
