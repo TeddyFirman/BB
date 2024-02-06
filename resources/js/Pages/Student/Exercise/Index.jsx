@@ -31,12 +31,19 @@ export default function Student() {
 
   const fetcher = (url) => axios.get(url).then((response) => response.data);
 
-  const { data: exercises, isLoading } = useSWR(
+  const { data: chapters, isLoading: chapterLoading } = useSWR(
+    `/api/student/bab-materi/${chapterId}`,
+    fetcher,
+  );
+
+  const { data: exercises, isLoading: exerciseLoading } = useSWR(
     `/api/student/form-soal/${lastParts}`,
     fetcher,
   );
   const codeQuestion = exercises?.bab && exercises.bab[0]?.code_question;
   const quiz = exercises?.qna;
+  const [babId] = quiz;
+  console.log(babId.bab_id);
 
   async function submit(data) {
     await axios
@@ -86,8 +93,8 @@ export default function Student() {
       });
   }
   useEffect(() => {
-    setValue('bab_id', parseInt(chapterId));
-  }, [setValue, chapterId]);
+    setValue('bab_id', parseInt(babId.bab_id));
+  }, [setValue, babId.bab_id]);
 
   return (
     <LayoutStudent>
@@ -155,7 +162,7 @@ export default function Student() {
             </div>
 
             <div className="space-y-2.5 font-body text-gray-600">
-              {isLoading ? (
+              {exerciseLoading ? (
                 <div className="flex flex-row items-center justify-between rounded-sm border-2 border-gray-200 bg-gray-100 p-2">
                   <p className="w-full text-center text-lg font-semibold text-gray-800">
                     Sedang Memuat...

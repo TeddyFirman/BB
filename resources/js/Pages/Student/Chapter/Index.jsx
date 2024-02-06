@@ -18,7 +18,7 @@ export default function Student() {
   );
   const chapters = data?.babs;
   const remark = data?.dataRemark;
-  console.log(remark);
+
   return (
     <LayoutStudent>
       <Head title="Sub-Materi" />
