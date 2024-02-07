@@ -3,10 +3,10 @@ import axios from 'axios';
 import { Head } from '@inertiajs/react';
 import React, { useState } from 'react';
 import Layout from '@/Pages/Layout/Layout';
+import Loading from '@/Components/Loading';
 import AddChapter from '@/Components/Modal/AddChapter';
 import EditChapter from '@/Components/Modal/EditChapter';
 import DeleteChapter from '@/Components/Modal/DeleteChapter';
-import Loading from '@/Components/Loading';
 
 export default function Index() {
   const [chapter, setChapter] = useState([]);
