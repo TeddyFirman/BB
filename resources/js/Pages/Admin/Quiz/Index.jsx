@@ -18,10 +18,6 @@ export default function Index() {
   const [openEdit, setOpenEdit] = useState(false);
 
   const fetcher = (url) => axios.get(url).then((response) => response?.data);
-  const { data: quizs, isLoading: quizLoading } = useSWR(
-    `/api/admin/get-question-quiz`,
-    fetcher,
-  );
   useEffect(() => {
     try {
       axios.get(`/api/admin/bab`).then((response) => {

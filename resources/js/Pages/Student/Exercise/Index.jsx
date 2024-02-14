@@ -31,19 +31,13 @@ export default function Student() {
 
   const fetcher = (url) => axios.get(url).then((response) => response.data);
 
-  const { data: chapters, isLoading: chapterLoading } = useSWR(
-    `/api/student/bab-materi/${chapterId}`,
-    fetcher,
-  );
-
   const { data: exercises, isLoading: exerciseLoading } = useSWR(
     `/api/student/form-soal/${lastParts}`,
     fetcher,
   );
   const codeQuestion = exercises?.bab && exercises.bab[0]?.code_question;
   const quiz = exercises?.qna;
-  const [babId] = quiz;
-  console.log(babId.bab_id);
+  const babId = quiz || [];
 
   async function submit(data) {
     await axios
@@ -93,8 +87,8 @@ export default function Student() {
       });
   }
   useEffect(() => {
-    setValue('bab_id', parseInt(babId.bab_id));
-  }, [setValue, babId.bab_id]);
+    setValue('bab_id', parseInt(babId[0]?.bab_id || []));
+  }, [setValue, babId[0]?.bab_id || []]);
 
   return (
     <LayoutStudent>
