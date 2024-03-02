@@ -1,18 +1,21 @@
 import { useEffect } from 'react';
-import Checkbox from '@/Components/Checkbox';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, useForm, router } from '@inertiajs/react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
+import axios from 'axios';
 
-export default function Login({ status, canResetPassword }) {
-  const { data, setData, post, processing, errors, reset } = useForm({
+export default function Login({ status }) {
+  const { data, setData, processing, errors, reset } = useForm({
     email: '',
     password: '',
     remember: false,
   });
+  const email = data.email;
+  const password = data.password;
 
   useEffect(() => {
     return () => {
@@ -23,77 +26,80 @@ export default function Login({ status, canResetPassword }) {
   const submit = (e) => {
     e.preventDefault();
 
-    post(route('login'));
+    axios
+      .post('/api/login', { email, password })
+      .then((response) => {
+        if (response.data.data.role == 'admin') {
+          router.visit(route('admin.dashboard'));
+        } else {
+          router.visit(route('student.material'));
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
     <GuestLayout>
-      <Head title="Log in" />
+      <Head title="Masuk" />
 
       {status && (
-        <div className="mb-4 text-sm font-medium text-green-600">{status}</div>
+        <div className="text-sm font-medium text-green-600">{status}</div>
       )}
+      <div className="w-2/5 rounded bg-white px-4 py-2 shadow-md">
+        <Link href={route('/')}>
+          <ApplicationLogo className="mx-auto w-16 fill-current text-gray-400 transition duration-300 hover:text-red-600" />
+        </Link>
+        <form onSubmit={submit} method="POST" className="w-full space-y-4">
+          <div className="space-y-1.5">
+            <InputLabel htmlFor="email" value="Email" />
 
-      <form onSubmit={submit}>
-        <div>
-          <InputLabel htmlFor="email" value="Email" />
-
-          <TextInput
-            id="email"
-            type="email"
-            name="email"
-            value={data.email}
-            className="mt-1 block w-full"
-            autoComplete="username"
-            isFocused={true}
-            onChange={(e) => setData('email', e.target.value)}
-          />
-
-          <InputError message={errors.email} className="mt-2" />
-        </div>
-
-        <div className="mt-4">
-          <InputLabel htmlFor="password" value="Password" />
-
-          <TextInput
-            id="password"
-            type="password"
-            name="password"
-            value={data.password}
-            className="mt-1 block w-full"
-            autoComplete="current-password"
-            onChange={(e) => setData('password', e.target.value)}
-          />
-
-          <InputError message={errors.password} className="mt-2" />
-        </div>
-
-        <div className="mt-4 block">
-          <label className="flex items-center">
-            <Checkbox
-              name="remember"
-              checked={data.remember}
-              onChange={(e) => setData('remember', e.target.checked)}
+            <TextInput
+              id="email"
+              type="email"
+              name="email"
+              value={data.email}
+              className="block w-full"
+              autoComplete="username"
+              isFocused={true}
+              onChange={(e) => setData('email', e.target.value)}
             />
-            <span className="ms-2 text-sm text-gray-600">Remember me</span>
-          </label>
-        </div>
 
-        <div className="mt-4 flex items-center justify-end">
-          {canResetPassword && (
-            <Link
-              href={route('password.request')}
-              className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-            >
-              Forgot your password?
-            </Link>
-          )}
+            <InputError message={errors.email} />
+          </div>
 
-          <PrimaryButton className="ms-4" disabled={processing}>
-            Log in
-          </PrimaryButton>
-        </div>
-      </form>
+          <div className="space-y-1.5">
+            <InputLabel htmlFor="password" value="Password" />
+
+            <TextInput
+              id="password"
+              type="password"
+              name="password"
+              value={data.password}
+              className="block w-full"
+              autoComplete="current-password"
+              onChange={(e) => setData('password', e.target.value)}
+            />
+
+            <InputError message={errors.password} />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="font-body text-sm text-gray-400">
+              Belum Punya Akun?&nbsp;
+              <Link
+                href={route('register')}
+                className="font-medium text-red-400 hover:text-red-600 focus:outline-none"
+              >
+                Registrasi
+              </Link>
+            </div>
+
+            <PrimaryButton disabled={processing}>Masuk</PrimaryButton>
+          </div>
+        </form>
+      </div>
     </GuestLayout>
   );
 }

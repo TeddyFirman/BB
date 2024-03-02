@@ -1,117 +1,141 @@
+import axios from 'axios';
 import { useEffect } from 'react';
 import GuestLayout from '@/Layouts/GuestLayout';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Head, Link, useForm } from '@inertiajs/react';
+import ApplicationLogo from '@/Components/ApplicationLogo';
+import { Head, Link, useForm, router } from '@inertiajs/react';
 
 export default function Register() {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-    });
+  const { data, setData, processing, errors, reset } = useForm({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+  });
 
-    useEffect(() => {
-        return () => {
-            reset('password', 'password_confirmation');
-        };
-    }, []);
-
-    const submit = (e) => {
-        e.preventDefault();
-
-        post(route('register'));
+  useEffect(() => {
+    return () => {
+      reset('password', 'password_confirmation');
     };
+  }, []);
 
-    return (
-        <GuestLayout>
-            <Head title="Register" />
+  const name = data.name;
+  const email = data.email;
+  const password = data.password;
+  const confirm_password = data.password_confirmation;
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="name" value="Name" />
+  const submit = (e) => {
+    e.preventDefault();
 
-                    <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
-                        className="mt-1 block w-full"
-                        autoComplete="name"
-                        isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
-                        required
-                    />
+    axios
+      .post('/api/register', { name, email, password, confirm_password })
+      .then((response) => {
+        console.log(response);
+        router.visit(route('login'));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-                    <InputError message={errors.name} className="mt-2" />
-                </div>
+  return (
+    <GuestLayout>
+      <Head title="Registrasi" />
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+      <div className="w-2/5 rounded bg-white px-4 py-2 shadow-md">
+        <Link href={route('/')}>
+          <ApplicationLogo className="mx-auto w-16 fill-current text-gray-400 transition duration-300 hover:text-red-600" />
+        </Link>
+        <form onSubmit={submit} method="POST" className="space-y-2.5">
+          <div className="space-y-1.5">
+            <InputLabel htmlFor="name" value="Name" />
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                        required
-                    />
+            <TextInput
+              id="name"
+              name="name"
+              value={data.name}
+              className="block w-full"
+              autoComplete="name"
+              isFocused={true}
+              onChange={(e) => setData('name', e.target.value)}
+              required
+            />
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
+            <InputError message={errors.name} />
+          </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+          <div className="space-y-1.5">
+            <InputLabel htmlFor="email" value="Email" />
 
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
-                    />
+            <TextInput
+              id="email"
+              type="email"
+              name="email"
+              value={data.email}
+              className="block w-full"
+              autoComplete="username"
+              onChange={(e) => setData('email', e.target.value)}
+              required
+            />
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
+            <InputError message={errors.email} />
+          </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+          <div className="space-y-1.5">
+            <InputLabel htmlFor="password" value="Password" />
 
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        required
-                    />
+            <TextInput
+              id="password"
+              type="password"
+              name="password"
+              value={data.password}
+              className="block w-full"
+              autoComplete="new-password"
+              onChange={(e) => setData('password', e.target.value)}
+              required
+            />
 
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
+            <InputError message={errors.password} />
+          </div>
 
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href={route('login')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Already registered?
-                    </Link>
+          <div className="space-y-1.5">
+            <InputLabel
+              htmlFor="password_confirmation"
+              value="Confirm Password"
+            />
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
-    );
+            <TextInput
+              id="password_confirmation"
+              type="password"
+              name="password_confirmation"
+              value={data.password_confirmation}
+              className="block w-full"
+              autoComplete="new-password"
+              onChange={(e) => setData('password_confirmation', e.target.value)}
+              required
+            />
+
+            <InputError message={errors.password_confirmation} />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="font-body text-sm text-gray-400">
+              Sudah Punya Akun?&nbsp;
+              <Link
+                href={route('login')}
+                className="font-medium text-red-400 hover:text-red-600 focus:outline-none"
+              >
+                Masuk
+              </Link>
+            </div>
+
+            <PrimaryButton disabled={processing}>Registrasi</PrimaryButton>
+          </div>
+        </form>
+      </div>
+    </GuestLayout>
+  );
 }

@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\AddQNAController;
+use App\Http\Controllers\Admin\MateriController;
+use App\Http\Controllers\Admin\BabController;
+use App\Http\Controllers\Admin\QnAController;
+use App\Http\Controllers\User\SoalController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -17,46 +22,29 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Homepage');
-})->name('/');
-
-Route::get('/exercise', function () {
-    $exerciseList = [
-        [
-            "title" => "Basic Grammar (J_GUP1)",
-            "slug" => "basic-grammar-1"
-        ],
-        [
-            "title" => "Basic Grammar (J_GUP2)",
-            "slug" => "basic-grammar-2"
-        ],
-    ];
-    return Inertia::render('Exercise/Index', [
-        "exercises" => $exerciseList
-    ]);
-})->name('exercise');
-
-Route::get('/exercise/{exercise}', function () {
-    return Inertia::render('Exercise/Detail');
-});
-
-Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
-});
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->name('/');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::prefix('/admin')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/material',  [MateriController::class, 'view'])->name('admin.material');
+    Route::get('/chapter',  [BabController::class, 'view'])->name('admin.chapter');
+    Route::get('/question-answer',  [QnAController::class, 'view'])->name('admin.question.answer');
+    Route::get('/quiz',  [AddQNAController::class, 'view'])->name('admin.quiz');
+});
+Route::prefix('/student')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('/material', [SoalController::class, 'view'])->name('student.material');
+    Route::get('/material/chapter/{chapterId}', [SoalController::class, 'viewChapter'])->name('student.material.chapter');
+    Route::get('/material/chapter/{chapterId}/exercise/{id}', [SoalController::class, 'viewExercise'])->name('student.material.exercise');
 });
 
 require __DIR__ . '/auth.php';

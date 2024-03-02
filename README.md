@@ -7,6 +7,14 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+## Memulai Project
+
+Jika Anda Baru Melakukan Cloning Source Code Dari Repository GitHub, Silahkan Ikuti Tahapan Berikut:
+
+1. Jalankan Perintah `npm install` & `composer require` Pada Folder Anda Menyimpan Source Code.
+2. Silahkan Import Database Yang Telah Disediakan Pada Folder `database` Dalam Project Ini.
+3. Jalankan Perintah `php artisan serve` Untuk Backend & `npm run dev` Untuk Frontend.
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
