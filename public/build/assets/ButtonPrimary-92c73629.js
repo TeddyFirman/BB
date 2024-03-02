@@ -1,0 +1,1 @@
+import{j as t}from"./app-a06de757.js";function n({children:e,onClick:r}){return t.jsx("button",{onClick:r,className:"flex w-full rounded bg-red-600 px-5 py-2.5 shadow-lg transition duration-500 hover:bg-red-400 md:w-max",children:t.jsx("div",{className:"flex w-full flex-row items-center font-body text-lg text-white",children:e})})}export{n as B};
