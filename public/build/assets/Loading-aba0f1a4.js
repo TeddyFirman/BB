@@ -1,0 +1,1 @@
+import{j as e}from"./app-4ca9caa4.js";function t(){return e.jsx("div",{className:"flex flex-row items-center justify-between rounded-sm border-2 border-gray-200 bg-gray-100 p-2",children:e.jsx("p",{className:"w-full text-center text-lg font-semibold text-gray-800",children:"Sedang Memuat..."})})}export{t as L};
