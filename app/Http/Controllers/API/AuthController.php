@@ -73,4 +73,14 @@ class AuthController extends Controller
 
         return response()->json(['success' => true, 'message' => 'Logout Berhasil']);
     }
+
+    public function user()
+    {
+        $users = User::select('name')->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $users,
+        ]);
+    }
 }

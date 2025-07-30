@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::get('user', [AuthController::class, 'user']);
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 
 // Route::group(['middleware' => [\Spatie\Permission\Middleware\RoleMiddleware::using('admin')]], function () {
